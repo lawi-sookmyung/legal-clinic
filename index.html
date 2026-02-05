@@ -1286,7 +1286,7 @@
               </svg>
             </div>
             <h5 style="font-size: 15px; font-weight: 700; margin-top: 12px; color: var(--dark-text);">이메일 신청</h5>
-            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">hyunjeong.shin@sookmyung.ac.kr</p>
+            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">hyunjeong.shin&#64;sookmyung.ac.kr</p>
           </div>
         </div>
         <div class="col-md-3">
@@ -1538,7 +1538,7 @@
               <p class="process-text" style="margin: 0;">
                 <a href="file/법률상담 신청서(별첨 1).docx" download style="color: var(--rose-gold-primary); font-weight: 600;">법률상담 신청서(별첨 1)</a>를 다운로드하여 
                 인적사항(성명, 연락처 등), 희망하는 상담 유형, (대면 상담) 희망 일시 등을 기재한 후 
-                <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 작성된 신청서를 첨부하여 이메일을 발송합니다.
+                <strong>hyunjeong.shin&#64;sookmyung.ac.kr</strong>로 작성된 신청서를 첨부하여 이메일을 발송합니다.
               </p>
             </div>
 
@@ -1583,7 +1583,7 @@
                   <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">"상담 소감 및 희망사항" 이메일 송부</span>
                 </div>
                 <p style="margin: 12px 0 0 0; font-size: 13px; color: var(--light-text);">
-                  ※ "상담 소감 및 희망사항"(별첨 2)은 <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 이메일 송부
+                  ※ "상담 소감 및 희망사항"(별첨 2)은 <strong>hyunjeong.shin&#64;sookmyung.ac.kr</strong>로 이메일 송부
                 </p>
               </div>
             </div>
@@ -1639,7 +1639,7 @@
               관련 양식 다운로드
             </h4>
             <p style="font-size: 14px; color: var(--medium-text); margin-bottom: 20px; line-height: 1.7;">
-              아래 양식을 다운로드하여 작성한 후, <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 첨부하여 보내주세요.
+              아래 양식을 다운로드하여 작성한 후, <strong>hyunjeong.shin&#64;sookmyung.ac.kr</strong>로 첨부하여 보내주세요.
             </p>
             <div class="row g-3">
               <div class="col-md-4">
@@ -1688,7 +1688,7 @@
                 <strong style="color: var(--dark-text);">신청 방법:</strong><br>
                 ① 위 "법률상담 신청서" 양식을 다운로드<br>
                 ② 양식에 인적사항, 상담유형, 상담내용 등을 작성<br>
-                ③ 작성된 신청서를 이메일에 첨부하여 <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 발송
+                ③ 작성된 신청서를 이메일에 첨부하여 <strong>hyunjeong.shin&#64;sookmyung.ac.kr</strong>로 발송
               </p>
             </div>
           </div>
@@ -2374,7 +2374,7 @@
             <span class="footer-logo-text">숙명 리걸클리닉</span>
           </div>
           <p class="footer-desc">
-            숙명 출신 동문 변호사들이 함께하는 무료 법률상담 서비스입니다. 
+            숙명 출신 동문 변호사들이 함께하는 무료 법률상담 서비스입니다.<br>
             숙명인의 권리를 함께 지킵니다.
           </p>
           <img src="img/img-slogan-horizontal01_gold.png" 
@@ -2419,7 +2419,7 @@
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
-              hyunjeong.shin@sookmyung.ac.kr
+              hyunjeong.shin&#64;sookmyung.ac.kr
             </p>
           </div>
         </div>
@@ -2495,10 +2495,9 @@
     })();
 
     // ============================================================
-    // 자동 전송 (첨부파일 포함) - Google Apps Script 백엔드
+    // Google Apps Script 전송 - hidden form + iframe (가장 안정적)
     // ============================================================
-    // ★ 아래 URL만 본인 것으로 바꾸면 끝 ★
-    var GAS_URL = "https://script.google.com/macros/s/AKfycbzAxvG98VKHaPtg6vIBHdFqIvaSxAFn-lvsAZ2YHcAfUE3HgkY_cF4K3HcZxnoCsyQQGQ/exec";
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbzoew6ynbLSXDuNng8q7I_RQI4ypfdKbpA3IsJjA30UYffyW9OcOUQ2mgrySbnZ8Lnp4Q/exec";
 
     function sendConsult() {
       // 1. 체크박스 검증
@@ -2527,34 +2526,58 @@
       btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;animation:spin 1s linear infinite;" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 전송 중...</span>';
       btn.disabled = true;
 
-      // 4. 파일을 Base64로 변환 후 전송
+      // 4. 파일 → Base64
       var reader = new FileReader();
       reader.onload = function() {
-        var base64 = reader.result.split(',')[1]; // data:...;base64, 뒤의 데이터만
+        var base64 = reader.result.split(',')[1];
+        var userName = document.getElementById('fieldName').value;
 
-        var payload = {
-          "성명": document.getElementById('fieldName').value,
-          "소속": document.getElementById('fieldAffiliation').value,
-          "연락처": document.getElementById('fieldPhone').value,
-          "이메일": document.getElementById('fieldEmail').value,
-          "상담유형": document.querySelector('input[name="상담 유형"]:checked').value,
-          "희망일시": document.getElementById('fieldHopeDate').value,
-          "상담내용": document.getElementById('fieldContent').value,
-          "파일명": file.name,
-          "파일타입": file.type,
-          "파일데이터": base64
+        // 5. 숨은 iframe 생성
+        var iframeName = 'gasFrame_' + Date.now();
+        var iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        // 6. 숨은 form 생성 - 각 필드를 개별 hidden input으로
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = GAS_URL;
+        form.target = iframeName;
+        form.style.display = 'none';
+
+        var fields = {
+          'name': userName,
+          'affiliation': document.getElementById('fieldAffiliation').value,
+          'phone': document.getElementById('fieldPhone').value,
+          'email': document.getElementById('fieldEmail').value,
+          'type': document.querySelector('input[name="상담 유형"]:checked').value,
+          'hopeDate': document.getElementById('fieldHopeDate').value,
+          'content': document.getElementById('fieldContent').value,
+          'fileName': file.name,
+          'fileType': file.type,
+          'fileData': base64
         };
 
-        fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        })
-        .then(function(r) { return r.text(); })
-        .then(function(text) {
-          try { var res = JSON.parse(text); } catch(e) { var res = { success: true }; }
+        for (var key in fields) {
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = fields[key];
+          form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+
+        // 7. 3초 후 성공 처리 + 정리
+        setTimeout(function() {
+          document.body.removeChild(form);
+          document.body.removeChild(iframe);
+
           showResult('success',
             '✅ 전송 완료!',
-            payload["성명"] + '님의 상담 신청서가 첨부파일과 함께 전송되었습니다.<br>3일 이내 연락드리겠습니다.'
+            userName + '님의 상담 신청서가 첨부파일과 함께 전송되었습니다.<br>접수되면 연락드리겠습니다.'
           );
           document.getElementById('consultForm').reset();
           document.getElementById('fileInfo').style.display = 'none';
@@ -2563,15 +2586,7 @@
           document.getElementById('fileLabel').innerHTML = '작성한 <strong>법률상담 신청서</strong>를 첨부하세요';
           btn.innerHTML = origHTML;
           btn.disabled = false;
-        })
-        .catch(function(err) {
-          showResult('error',
-            '❌ 전송 실패',
-            '네트워크 오류입니다. 잠시 후 다시 시도해 주세요.<br>문제가 계속되면 hyunjeong.shin@sookmyung.ac.kr로 직접 보내주세요.'
-          );
-          btn.innerHTML = origHTML;
-          btn.disabled = false;
-        });
+        }, 3000);
       };
       reader.readAsDataURL(file);
     }
@@ -2640,4 +2655,24 @@
     // Animation on scroll
     const observerOptions = {
       threshold: 0.1,
-      rootMargin: '0px 0px -50px 0p
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.info-card, .card, .process-step').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
