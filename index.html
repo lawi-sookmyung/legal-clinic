@@ -6,6 +6,7 @@
   <title>숙명 리걸클리닉 | Sookmyung Legal Clinic</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       /* Rose Gold Red-Brown Theme */
@@ -40,7 +41,7 @@
     }
 
     body {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Nanum Gothic', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       background: linear-gradient(135deg, var(--rose-gold-lightest) 0%, #fff 50%, var(--rose-gold-lighter) 100%);
       color: var(--dark-text);
       min-height: 100vh;
@@ -105,10 +106,14 @@
     }
 
     .brand-title {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 26px;
+      font-weight: 900;
       color: var(--rose-gold-dark);
       line-height: 1.2;
+      font-family: 'Batang', '바탕', serif;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+      -webkit-text-stroke: 0.3px var(--rose-gold-dark);
     }
 
     .brand-subtitle {
@@ -260,6 +265,7 @@
       margin-bottom: 20px;
       animation: fadeInUp 0.8s ease 0.2s forwards;
       opacity: 0;
+      font-family: 'Nanum Myeongjo', serif;
     }
 
     .hero-title span {
@@ -432,6 +438,7 @@
       font-weight: 800;
       color: var(--dark-text);
       margin-bottom: 16px;
+      font-family: 'Nanum Myeongjo', serif;
     }
 
     .section-description {
@@ -502,9 +509,34 @@
       box-shadow: var(--shadow-lg);
     }
 
-    .about-image img {
+    .about-image > img {
       width: 100%;
       height: 400px;
+      object-fit: cover;
+    }
+
+    .about-legal-photo {
+      position: absolute;
+      bottom: 60px;
+      right: 16px;
+      width: 180px;
+      height: 130px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      opacity: 0.9;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .about-legal-photo:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .about-legal-photo img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 
@@ -528,6 +560,7 @@
       font-weight: 800;
       color: var(--dark-text);
       margin-bottom: 20px;
+      font-family: 'Nanum Myeongjo', serif;
     }
 
     .about-content p {
@@ -766,6 +799,7 @@
       font-weight: 800;
       color: var(--dark-text);
       margin-bottom: 24px;
+      font-family: 'Nanum Myeongjo', serif;
     }
 
     .form-label {
@@ -1457,6 +1491,9 @@
         <div class="col-lg-6">
           <div class="about-image">
             <img src="img/SMU_Gold.jpg" alt="숙명여자대학교">
+            <div class="about-legal-photo">
+              <img src="img/pics_legal.jpg" alt="숙명 리걸클리닉 개소식">
+            </div>
             <div class="about-overlay">
               <h4 class="about-overlay-title">세상을 바꾸는 부드러운 힘</h4>
             </div>
@@ -2377,9 +2414,7 @@
             숙명 출신 동문 변호사들이 함께하는 무료 법률상담 서비스입니다.<br>
             숙명인의 권리를 함께 지킵니다.
           </p>
-          <img src="img/img-slogan-horizontal01_gold.png" 
-               alt="세상을 바꾸는 부드러운 힘" 
-               style="height: 24px; opacity: 0.9; filter: brightness(0) invert(1);">
+          <span style="font-size: 20px; opacity: 0.9; color: #fff; letter-spacing: 1px; font-weight: 700;">세상을 바꾸는 부드러운 힘</span>
         </div>
         <div class="col-lg-2 col-md-4">
           <h5 class="footer-title">바로가기</h5>
