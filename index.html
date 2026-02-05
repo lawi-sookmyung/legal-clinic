@@ -2500,6 +2500,10 @@
     var GAS_URL = "https://script.google.com/macros/s/AKfycbzoew6ynbLSXDuNng8q7I_RQI4ypfdKbpA3IsJjA30UYffyW9OcOUQ2mgrySbnZ8Lnp4Q/exec";
 
     function sendConsult() {
+      // 이전 결과 메시지 숨기기
+      var prevResult = document.getElementById('formResult');
+      if (prevResult) prevResult.style.display = 'none';
+
       // 1. 체크박스 검증
       var ids = ['agree1','agree2','agree3','agree4'];
       for (var i = 0; i < ids.length; i++) {
@@ -2579,7 +2583,14 @@
             '✅ 전송 완료!',
             userName + '님의 상담 신청서가 첨부파일과 함께 전송되었습니다.<br>접수되면 연락드리겠습니다.'
           );
-          document.getElementById('consultForm').reset();
+          // 폼 초기화 (체크박스는 유지)
+          document.getElementById('fieldName').value = '';
+          document.getElementById('fieldAffiliation').value = '';
+          document.getElementById('fieldPhone').value = '';
+          document.getElementById('fieldEmail').value = '';
+          document.getElementById('fieldHopeDate').value = '';
+          document.getElementById('fieldContent').value = '';
+          document.getElementById('fieldAttachment').value = '';
           document.getElementById('fileInfo').style.display = 'none';
           document.getElementById('fileDropZone').style.borderColor = 'var(--rose-gold-light)';
           document.getElementById('fileDropZone').style.background = 'var(--rose-gold-lightest)';
