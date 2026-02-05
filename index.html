@@ -317,12 +317,18 @@
       border-radius: 30px;
       font-weight: 600;
       font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       transition: all 0.3s ease;
+      text-decoration: none;
     }
 
     .btn-hero-secondary:hover {
       background: rgba(255, 255, 255, 0.25);
       color: white;
+      transform: translateY(-3px);
+      text-decoration: none;
     }
 
     .hero-visual {
@@ -806,6 +812,9 @@
       width: 100%;
       box-shadow: var(--shadow-md);
       transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-submit:hover {
@@ -1048,6 +1057,82 @@
       scroll-behavior: smooth;
     }
 
+    .download-card:hover {
+      background: var(--rose-gold-lighter) !important;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Attorney Table */
+    .attorney-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .attorney-table thead {
+      background: var(--rose-gold-lightest);
+    }
+
+    .attorney-table th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--dark-text);
+      font-size: 13px;
+      border-bottom: 2px solid var(--rose-gold-lighter);
+      white-space: nowrap;
+    }
+
+    .attorney-table td {
+      padding: 12px 16px;
+      color: var(--medium-text);
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .attorney-table tbody tr:hover {
+      background: var(--rose-gold-lightest);
+      transition: background 0.2s ease;
+    }
+
+    .attorney-table td:first-child {
+      text-align: center;
+      color: var(--light-text);
+      font-size: 13px;
+    }
+
+    .attorney-table td:nth-child(2) strong {
+      color: var(--dark-text);
+    }
+
+    .specialty-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--rose-gold-lighter);
+      color: var(--rose-gold-dark);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 2px 3px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .attorney-table {
+        font-size: 13px;
+      }
+      .attorney-table th,
+      .attorney-table td {
+        padding: 10px 12px;
+      }
+    }
+
     /* Scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
@@ -1091,7 +1176,7 @@
           <li class="nav-item"><a class="nav-link" href="#process">상담절차</a></li>
           <li class="nav-item"><a class="nav-link" href="#team">상담변호사단</a></li>
           <li class="nav-item"><a class="nav-link" href="#schedule">상담일정</a></li>
-          <li class="nav-item"><a class="nav-link" href="https://snowe.sookmyung.ac.kr/bbs5/boards/legalclinic" target="_blank">온라인상담</a></li>
+          <li class="nav-item"><a class="nav-link" href="#consultation">온라인상담(이메일)</a></li>
           <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
         </ul>
         <a href="#consultation" class="btn btn-consultation">상담 신청</a>
@@ -1125,11 +1210,19 @@
             <div class="hero-buttons">
               <a href="#consultation" class="btn btn-hero-primary">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
                 </svg>
-                상담 신청하기
+                이메일 상담 신청
               </a>
-              <a href="#about" class="btn btn-hero-secondary">자세히 알아보기</a>
+              <a href="#about" class="btn btn-hero-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                자세히 알아보기
+              </a>
             </div>
           </div>
         </div>
@@ -1150,7 +1243,7 @@
               </p>
               <div class="hero-stats">
                 <div class="stat-item">
-                  <div class="stat-number">18</div>
+                  <div class="stat-number">19</div>
                   <div class="stat-label">동문 변호사</div>
                 </div>
                 <div class="stat-item">
@@ -1193,11 +1286,11 @@
               </svg>
             </div>
             <h5 style="font-size: 15px; font-weight: 700; margin-top: 12px; color: var(--dark-text);">이메일 신청</h5>
-            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">Lclin@sookmyung.ac.kr</p>
+            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">hyunjeong.shin@sookmyung.ac.kr</p>
           </div>
         </div>
         <div class="col-md-3">
-          <a href="https://snowe.sookmyung.ac.kr/bbs5/boards/legalclinic" target="_blank" class="feature-card text-center d-block" style="padding: 20px; text-decoration: none; transition: all 0.3s ease;">
+          <div class="feature-card text-center d-block" style="padding: 20px;">
             <div class="feature-icon mx-auto" style="width: 48px; height: 48px;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px;">
                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
@@ -1206,8 +1299,8 @@
               </svg>
             </div>
             <h5 style="font-size: 15px; font-weight: 700; margin-top: 12px; color: var(--dark-text);">온라인 상담</h5>
-            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">상담 게시판 바로가기</p>
-          </a>
+            <p style="font-size: 14px; color: var(--rose-gold-primary); font-weight: 600; margin: 0;">이메일로 상담 가능</p>
+          </div>
         </div>
         <div class="col-md-3">
           <div class="feature-card text-center" style="padding: 20px;">
@@ -1267,8 +1360,9 @@
             <h3 class="feature-title">대면 상담</h3>
             <p class="feature-text">
               주 3회 정기 대면 상담을 진행합니다. 
-              이메일로 상담 내용과 희망일을 제출하면 담당자가 연락해 
-              일대일 상담 일정을 확정합니다. 진리관 419호실에서 진행됩니다.
+              법률상담 신청서를 다운로드하여 작성 후 이메일에 첨부하여 보내면
+              담당자가 연락해 일대일 상담 일정을 확정합니다. 진리관 419호실에서 진행되며, 
+              상담 후 "상담 소감 및 희망사항"을 현장에서 제출합니다.
             </p>
           </div>
         </div>
@@ -1281,10 +1375,10 @@
                 <line x1="12" y1="17" x2="12" y2="21"/>
               </svg>
             </div>
-            <h3 class="feature-title">온라인 상담</h3>
+            <h3 class="feature-title">온라인 상담 (이메일)</h3>
             <p class="feature-text">
-              온라인 상담 게시판을 통해 편리하게 법률상담을 받으실 수 있습니다.
-              익명 상담도 가능하며, 모든 개인정보는 엄격하게 보호됩니다.
+              이메일을 통해 법률상담을 받으실 수 있습니다. 
+              신청서를 이메일로 제출하면, 필요시 추가 소통을 거쳐 변호사의 법률 조언 이메일을 수령합니다.
               다만 정확한 상담을 위해 대면 상담을 권장합니다.
             </p>
           </div>
@@ -1375,7 +1469,7 @@
             <p>
               숙명 리걸클리닉은 교내 무료 법률 서비스 제공을 위해 
               법학연구소 주관으로 마련되었습니다. 2023년 법과대학 교수로 퇴임한 성민섭 변호사가 
-              책임을 맡아 총 18명의 동문 변호사와 함께 운영합니다.
+              책임을 맡아 총 19명의 동문 변호사와 함께 운영합니다.
             </p>
             <p>
               <strong>성범죄, 노동, 상속, 부동산</strong> 등 다양한 법률문제에 대해 동문 변호사들의 
@@ -1388,7 +1482,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="20,6 9,17 4,12"/>
                 </svg>
-                숙명 동문 변호사 18명의 자발적 재능기부
+                숙명 동문 변호사 19명의 자발적 재능기부
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1434,52 +1528,99 @@
 
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <div class="process-step">
-            <div class="process-number">1</div>
-            <div class="process-content">
-              <h4 class="process-title">법률상담 신청서 이메일 제출</h4>
-              <p class="process-text">
-                "법률상담 신청서"에 인적사항(성명, 연락처 등), 희망하는 상담 유형, 
-                (대면 상담) 희망 일시 등을 기재하여 <strong>Lclin@sookmyung.ac.kr</strong>로 이메일을 발송합니다.
-                <br><br>
-                <em>※ 온라인 상담보다는 좀 더 정확하고 효율적인 (예약) 대면 상담을 적극 이용해 주시기 바랍니다.</em>
+          <!-- ① 이메일 상담 -->
+          <div style="margin-bottom: 40px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--rose-gold-dark); color: white; border-radius: 50%; font-weight: 800; font-size: 16px;">①</span>
+              <h3 style="font-size: 20px; font-weight: 700; color: var(--dark-text); margin: 0;">법률상담 신청서 이메일 제출</h3>
+            </div>
+            <div class="feature-card" style="margin-bottom: 16px;">
+              <p class="process-text" style="margin: 0;">
+                <a href="file/법률상담 신청서(별첨 1).docx" download style="color: var(--rose-gold-primary); font-weight: 600;">법률상담 신청서(별첨 1)</a>를 다운로드하여 
+                인적사항(성명, 연락처 등), 희망하는 상담 유형, (대면 상담) 희망 일시 등을 기재한 후 
+                <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 작성된 신청서를 첨부하여 이메일을 발송합니다.
               </p>
             </div>
-          </div>
-          <div class="process-step">
-            <div class="process-number">2</div>
-            <div class="process-content">
-              <h4 class="process-title">접수 확인 및 상담 일시 확정</h4>
-              <p class="process-text">
-                이메일 접수 확인 후 3일 내에 전화 등을 통해 상담 신청인에게 대면 상담 일시 확정을 위해 연락드립니다.
-                3일 내에 연락을 받지 못하면, 반드시 문자나 전화(02-710-9225)로 접수 사실을 확인하시기 바랍니다.
-              </p>
+
+            <!-- ①-1 대면 상담 -->
+            <div style="margin-left: 24px; border-left: 3px solid var(--rose-gold-primary); padding-left: 20px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 14px; background: var(--rose-gold-primary); color: white; border-radius: 20px; font-weight: 700; font-size: 13px;">①-1</span>
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--dark-text); margin: 0;">(예약) 대면 상담 <span style="font-size: 13px; color: var(--rose-gold-primary); font-weight: 600;">(권장)</span></h4>
+              </div>
+              <div class="feature-card" style="background: var(--rose-gold-lightest); border: none;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--medium-text); line-height: 2;">
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">접수 사실 통지</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">상담 일시 확정</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">진리관 419호실 방문 상담</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">"상담 소감 및 희망사항" 작성 제출 (진리관 419호)</span>
+                </div>
+                <ul style="margin: 16px 0 0 0; padding-left: 20px; font-size: 13px; color: var(--medium-text); line-height: 2;">
+                  <li>이메일 접수 확인 후 <strong>3일 내</strong> 전화 등으로 상담 일시 확정 연락</li>
+                  <li>3일 내 연락이 없으면 전화(02-710-9225)로 접수 사실 확인</li>
+                  <li>상담 시 관련 자료(계약서, 문서, 등기부등본, 소장 등) <strong>원본 지참</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- ①-2 온라인(이메일) 상담 -->
+            <div style="margin-left: 24px; border-left: 3px solid var(--rose-gold-medium); padding-left: 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 14px; background: var(--rose-gold-medium); color: white; border-radius: 20px; font-weight: 700; font-size: 13px;">①-2</span>
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--dark-text); margin: 0;">온라인 상담 (이메일)</h4>
+              </div>
+              <div class="feature-card" style="background: var(--rose-gold-lightest); border: none;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--medium-text); line-height: 2;">
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">접수 사실 통지</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">(필요시 추가 소통)</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">변호사 법률 조언 이메일 수령</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">"상담 소감 및 희망사항" 이메일 송부</span>
+                </div>
+                <p style="margin: 12px 0 0 0; font-size: 13px; color: var(--light-text);">
+                  ※ "상담 소감 및 희망사항"(별첨 2)은 <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 이메일 송부
+                </p>
+              </div>
             </div>
           </div>
-          <div class="process-step">
-            <div class="process-number">3</div>
-            <div class="process-content">
-              <h4 class="process-title">법률 상담 진행</h4>
-              <p class="process-text">
-                <strong>[대면 상담]</strong> 확정된 일시에 <strong>진리관 419호실</strong>을 방문합니다.
-                상담 희망 사실관계와 분쟁 진행 상황을 정확하게 파악하는 데 보탬이 될만한 모든 자료들
-                (계약서, 주고받은 문서, 등기부등본, 소장 등)의 <strong>원본을 꼭 지참</strong>해 주세요.
-                <br><br>
-                <strong>[온라인 상담]</strong> 접수 사실 통지 후 필요시 추가 소통을 거쳐 변호사의 법률 조언 이메일을 수령합니다.
-              </p>
+
+          <!-- ② 1.3.7 게시판 온라인 상담 (펜딩) -->
+          <div style="opacity: 0.5;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--light-text); color: white; border-radius: 50%; font-weight: 800; font-size: 16px;">②</span>
+              <h3 style="font-size: 20px; font-weight: 700; color: var(--dark-text); margin: 0;">1.3.7 게시판 온라인 상담 
+                <span style="display: inline-block; padding: 4px 14px; background: var(--rose-gold-lighter); color: var(--light-text); border-radius: 20px; font-size: 13px; font-weight: 600; vertical-align: middle; margin-left: 8px;">현재 준비 중</span>
+              </h3>
+            </div>
+
+            <!-- ②-1 게시판 상담 -->
+            <div style="margin-left: 24px; border-left: 3px dashed var(--rose-gold-light); padding-left: 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 14px; background: var(--rose-gold-light); color: var(--medium-text); border-radius: 20px; font-weight: 700; font-size: 13px;">②-1</span>
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--dark-text); margin: 0;">1.3.7 게시판 상담</h4>
+              </div>
+              <div class="feature-card" style="background: var(--rose-gold-lightest); border: none;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--medium-text); line-height: 2;">
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">접수 사실 통지 (3일 내)</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">(필요시 추가 소통)</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">변호사 법률 조언 답글</span>
+                  <span style="color: var(--rose-gold-primary); font-weight: 700;">→</span>
+                  <span style="padding: 4px 12px; background: white; border-radius: 8px; font-weight: 600;">"상담 소감 및 희망사항"(별첨 2) 작성</span>
+                </div>
+                <p style="margin: 12px 0 0 0; font-size: 13px; color: var(--light-text);">
+                  ※ 1.3.7 게시판 상담은 현재 준비 중입니다. 오픈 시 별도 안내 예정입니다.
+                </p>
+              </div>
             </div>
           </div>
-          <div class="process-step">
-            <div class="process-number">4</div>
-            <div class="process-content">
-              <h4 class="process-title">상담 소감 및 희망사항 제출</h4>
-              <p class="process-text">
-                법률상담을 마친 후 "상담 소감 및 희망사항" 양식에 솔직한 의견을 작성하여 제출합니다.
-                대면 상담의 경우 상담실에서, 온라인 상담의 경우 이메일(Lclin@sookmyung.ac.kr)로 제출해 주세요.
-                여러분의 소중한 의견은 더 나은 리걸클리닉으로 발전하는 데 큰 도움이 됩니다.
-              </p>
-            </div>
-          </div>
+
         </div>
       </div>
       
@@ -1487,7 +1628,7 @@
       <div class="row justify-content-center mt-5">
         <div class="col-lg-8">
           <div class="feature-card">
-            <h4 style="font-size: 18px; font-weight: 700; color: var(--dark-text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <h4 style="font-size: 18px; font-weight: 700; color: var(--dark-text); margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 24px; height: 24px;">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14,2 14,8 20,8"/>
@@ -1497,37 +1638,58 @@
               </svg>
               관련 양식 다운로드
             </h4>
+            <p style="font-size: 14px; color: var(--medium-text); margin-bottom: 20px; line-height: 1.7;">
+              아래 양식을 다운로드하여 작성한 후, <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 첨부하여 보내주세요.
+            </p>
             <div class="row g-3">
               <div class="col-md-4">
-                <a href="#" class="d-block p-3 text-center" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
+                <a href="file/법률상담 신청서(별첨 1).docx" download class="d-block p-3 text-center download-card" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 32px; height: 32px; margin-bottom: 8px;">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14,2 14,8 20,8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="12" y2="18"/>
+                    <line x1="15" y1="15" x2="12" y2="18"/>
                   </svg>
                   <p style="font-size: 14px; font-weight: 600; color: var(--dark-text); margin: 0;">법률상담 신청서</p>
-                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 1)</p>
+                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 1) DOCX 다운로드</p>
                 </a>
               </div>
               <div class="col-md-4">
-                <a href="#" class="d-block p-3 text-center" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
+                <a href="file/상담 소감 및 희망 사항(별첨 2).docx" download class="d-block p-3 text-center download-card" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 32px; height: 32px; margin-bottom: 8px;">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14,2 14,8 20,8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="12" y2="18"/>
+                    <line x1="15" y1="15" x2="12" y2="18"/>
                   </svg>
                   <p style="font-size: 14px; font-weight: 600; color: var(--dark-text); margin: 0;">상담 소감 및 희망사항</p>
-                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 2)</p>
+                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 2) DOCX 다운로드</p>
                 </a>
               </div>
               <div class="col-md-4">
-                <a href="#" class="d-block p-3 text-center" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
+                <a href="file/숙명 리걸클리닉 법률상담 신청방법 안내(별첨 3).docx" download class="d-block p-3 text-center download-card" style="background: var(--rose-gold-lightest); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 32px; height: 32px; margin-bottom: 8px;">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14,2 14,8 20,8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="12" y2="18"/>
+                    <line x1="15" y1="15" x2="12" y2="18"/>
                   </svg>
                   <p style="font-size: 14px; font-weight: 600; color: var(--dark-text); margin: 0;">상담 신청방법 안내</p>
-                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 3)</p>
+                  <p style="font-size: 12px; color: var(--light-text); margin: 0;">(별첨 3) DOCX 다운로드</p>
                 </a>
               </div>
+            </div>
+            <!-- Step Guide -->
+            <div style="margin-top: 20px; padding: 16px; background: rgba(156, 92, 92, 0.06); border-radius: 12px; border-left: 3px solid var(--rose-gold-primary);">
+              <p style="font-size: 14px; color: var(--medium-text); margin: 0; line-height: 1.8;">
+                <strong style="color: var(--dark-text);">신청 방법:</strong><br>
+                ① 위 "법률상담 신청서" 양식을 다운로드<br>
+                ② 양식에 인적사항, 상담유형, 상담내용 등을 작성<br>
+                ③ 작성된 신청서를 이메일에 첨부하여 <strong>hyunjeong.shin@sookmyung.ac.kr</strong>로 발송
+              </p>
             </div>
           </div>
         </div>
@@ -1551,12 +1713,13 @@
         <h2 class="section-title">숙명 리걸 가디언스</h2>
         <p class="section-description">
           2023년 법과대학 교수로 퇴임한 성민섭 변호사가 책임을 맡아 
-          총 18명의 동문 변호사와 함께 운영합니다.
+          총 19명의 동문 변호사와 함께 운영합니다.
         </p>
       </div>
 
-      <div class="row g-4 justify-content-center">
-        <div class="col-6 col-md-4 col-lg-3">
+      <!-- Overview Cards -->
+      <div class="row g-4 justify-content-center mb-5">
+        <div class="col-6 col-md-3">
           <div class="team-card">
             <div class="team-avatar">성</div>
             <h5 class="team-name">성민섭 변호사</h5>
@@ -1564,15 +1727,15 @@
             <p class="team-desc">전 숙명여대 법과대학 교수</p>
           </div>
         </div>
-        <div class="col-6 col-md-4 col-lg-3">
+        <div class="col-6 col-md-3">
           <div class="team-card">
-            <div class="team-avatar">18</div>
-            <h5 class="team-name">동문 변호사단</h5>
+            <div class="team-avatar">19</div>
+            <h5 class="team-name">위촉 변호사단</h5>
             <p class="team-role">상담 변호사</p>
-            <p class="team-desc">총 18명의 동문 변호사 참여</p>
+            <p class="team-desc">숙명 동문 변호사 참여</p>
           </div>
         </div>
-        <div class="col-6 col-md-4 col-lg-3">
+        <div class="col-6 col-md-3">
           <div class="team-card">
             <div class="team-avatar">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 36px; height: 36px; color: var(--rose-gold-dark);">
@@ -1584,12 +1747,212 @@
             <p class="team-desc">숙명여대 법학연구소 주관</p>
           </div>
         </div>
-        <div class="col-6 col-md-4 col-lg-3">
+        <div class="col-6 col-md-3">
           <div class="team-card">
             <div class="team-avatar">+</div>
             <h5 class="team-name">서비스 확대</h5>
             <p class="team-role">향후 계획</p>
             <p class="team-desc">지역 주민으로 대상 확대 예정</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attorney Directory -->
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="feature-card" style="padding: 0; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, var(--rose-gold-dark), var(--rose-gold-primary)); padding: 24px 30px;">
+              <h4 style="font-size: 20px; font-weight: 700; color: white; margin: 0;">위촉 변호사 명단 (2025)</h4>
+              <p style="font-size: 14px; color: rgba(255,255,255,0.8); margin: 8px 0 0 0;">숙명 동문 변호사들의 자발적 재능기부로 운영됩니다</p>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="attorney-table">
+                <thead>
+                  <tr>
+                    <th>번호</th>
+                    <th>성명</th>
+                    <th>학부</th>
+                    <th>학번</th>
+                    <th>변호사시험</th>
+                    <th>현재 소속</th>
+                    <th>전문 분야</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><strong>권병진</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><strong>서혜원</strong></td>
+                    <td>법학부</td>
+                    <td>03학번</td>
+                    <td>4회</td>
+                    <td>-</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">이혼</span><span class="specialty-tag">학폭(소년)</span></td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td><strong>유한나</strong></td>
+                    <td>법학부</td>
+                    <td>06학번</td>
+                    <td>8회</td>
+                    <td>법무법인 강건</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">노동</span></td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td><strong>오지영</strong></td>
+                    <td>법학부</td>
+                    <td>06학번</td>
+                    <td>6회</td>
+                    <td>법무법인 명륜</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">민사</span></td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td><strong>손현정</strong></td>
+                    <td>법학과</td>
+                    <td>08학번</td>
+                    <td>8회</td>
+                    <td>법무법인 산하</td>
+                    <td><span class="specialty-tag">가사(이혼·상속)</span></td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td><strong>김민정</strong></td>
+                    <td>법학부</td>
+                    <td>08학번</td>
+                    <td>6회</td>
+                    <td>법무법인 박앤정</td>
+                    <td><span class="specialty-tag">건설</span></td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td><strong>김의지</strong></td>
+                    <td>법학부</td>
+                    <td>09학번</td>
+                    <td>9회</td>
+                    <td>법률사무소 리그</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">이혼</span></td>
+                  </tr>
+                  <tr>
+                    <td>8</td>
+                    <td><strong>김잔디</strong></td>
+                    <td>법학부</td>
+                    <td>09학번</td>
+                    <td>8회</td>
+                    <td>법무법인 대륜</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">가사</span></td>
+                  </tr>
+                  <tr>
+                    <td>9</td>
+                    <td><strong>김의연</strong></td>
+                    <td>법학부</td>
+                    <td>12학번</td>
+                    <td>12회</td>
+                    <td>법무법인 오현</td>
+                    <td><span class="specialty-tag">형사</span><span class="specialty-tag">금융</span></td>
+                  </tr>
+                  <tr>
+                    <td>10</td>
+                    <td><strong>한민경</strong></td>
+                    <td>법학부</td>
+                    <td>12학번</td>
+                    <td>8회</td>
+                    <td>로일법무법인</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>11</td>
+                    <td><strong>고하영</strong></td>
+                    <td>법학부</td>
+                    <td>13학번</td>
+                    <td>12회</td>
+                    <td>법원행정처</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>12</td>
+                    <td><strong>홍은영</strong></td>
+                    <td>법학부</td>
+                    <td>13학번</td>
+                    <td>9회</td>
+                    <td>법무법인 고구려</td>
+                    <td><span class="specialty-tag">금융</span></td>
+                  </tr>
+                  <tr>
+                    <td>13</td>
+                    <td><strong>정혜린</strong></td>
+                    <td>법학부</td>
+                    <td>14학번</td>
+                    <td>13회</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>14</td>
+                    <td><strong>허유진</strong></td>
+                    <td>법학부</td>
+                    <td>14학번</td>
+                    <td>13회</td>
+                    <td>의정부지방법원</td>
+                    <td><span class="specialty-tag">조정전담</span></td>
+                  </tr>
+                  <tr>
+                    <td>15</td>
+                    <td><strong>고소연</strong></td>
+                    <td>아동복지학<br>(법학부 전과)</td>
+                    <td>14학번</td>
+                    <td>12회</td>
+                    <td>법무법인 YK</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>16</td>
+                    <td><strong>김지혜</strong></td>
+                    <td>법학부</td>
+                    <td>14학번</td>
+                    <td>12회</td>
+                    <td>파크시스템스㈜</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>17</td>
+                    <td><strong>신다희</strong></td>
+                    <td>법학부</td>
+                    <td>14학번</td>
+                    <td>14회</td>
+                    <td>서울경찰청</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>18</td>
+                    <td><strong>이수빈</strong></td>
+                    <td>경제학부</td>
+                    <td>15학번</td>
+                    <td>13회</td>
+                    <td>법무법인 해랑</td>
+                    <td><span class="specialty-tag">교통사고</span><span class="specialty-tag">신체손해배상</span></td>
+                  </tr>
+                  <tr>
+                    <td>19</td>
+                    <td><strong>유소희</strong></td>
+                    <td>법학부<br>(경영 복수전공)</td>
+                    <td>16학번</td>
+                    <td>13회</td>
+                    <td>법무법인 YK</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -1677,7 +2040,7 @@
                 <div class="schedule-day">예약</div>
                 <div class="schedule-info">
                   <h5>예약 대면 상담 (권장)</h5>
-                  <p>이메일로 신청 후 일정 확정</p>
+                  <p>신청서 다운로드 → 작성 → 이메일 첨부 발송 후 일정 확정</p>
                 </div>
               </div>
               <div class="schedule-item">
@@ -1690,8 +2053,15 @@
               <div class="schedule-item">
                 <div class="schedule-day">온라인</div>
                 <div class="schedule-info">
-                  <h5>온라인 상담</h5>
+                  <h5>온라인 상담 (이메일)</h5>
                   <p>이메일을 통한 상담 (대면 상담 권장)</p>
+                </div>
+              </div>
+              <div class="schedule-item" style="opacity: 0.5;">
+                <div class="schedule-day" style="background: var(--rose-gold-lighter); color: var(--light-text);">준비중</div>
+                <div class="schedule-info">
+                  <h5>1.3.7 게시판 상담</h5>
+                  <p>현재 준비 중 (오픈 시 안내 예정)</p>
                 </div>
               </div>
             </div>
@@ -1816,54 +2186,121 @@
       <div class="row justify-content-center">
         <div class="col-lg-10">
           <div class="form-card">
-            <h3 class="form-title text-center mb-2">법률상담 신청서</h3>
-            <p class="text-center mb-4" style="color: var(--medium-text); font-size: 14px;">
-              아래 양식을 작성하여 <strong>Lclin@sookmyung.ac.kr</strong>로 이메일을 보내주세요.
+            <h3 class="form-title text-center mb-2">법률상담 신청</h3>
+            <p class="text-center mb-3" style="color: var(--medium-text); font-size: 14px;">
+              아래 양식을 작성하고 법률상담 신청서를 첨부하여 제출하면 <strong>이메일이 바로 전송됩니다.</strong>
             </p>
-            <form>
+            <div class="text-center mb-4">
+              <a href="file/법률상담 신청서(별첨 1).docx" download 
+                 style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: var(--rose-gold-lightest); color: var(--rose-gold-dark); border-radius: 30px; text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid var(--rose-gold-light); transition: all 0.3s ease;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14,2 14,8 20,8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="12" y2="18"/>
+                  <line x1="15" y1="15" x2="12" y2="18"/>
+                </svg>
+                법률상담 신청서 다운로드 (별첨 1)
+              </a>
+            </div>
+            <form id="consultForm" onsubmit="return false;">
+              <!-- Google Apps Script로 자동 전송 (첨부파일 포함) -->
+
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">성명 *</label>
-                  <input type="text" class="form-control" placeholder="성명을 입력하세요" required>
+                  <input type="text" class="form-control" name="성명" id="fieldName" placeholder="성명을 입력하세요" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">소속 및 생년월일 *</label>
-                  <input type="text" class="form-control" placeholder="예: 법학부 3학년 / 1999.01.01" required>
+                  <input type="text" class="form-control" name="소속 및 생년월일" id="fieldAffiliation" placeholder="예: 법학부 3학년 / 1999.01.01" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">연락처 (핸드폰) *</label>
-                  <input type="tel" class="form-control" placeholder="010-0000-0000" required>
+                  <input type="tel" class="form-control" name="연락처" id="fieldPhone" placeholder="010-0000-0000" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">이메일 *</label>
-                  <input type="email" class="form-control" placeholder="이메일을 입력하세요" required>
+                  <input type="email" class="form-control" name="이메일" id="fieldEmail" placeholder="이메일을 입력하세요" required>
                 </div>
                 <div class="col-12">
                   <label class="form-label">상담 유형 *</label>
                   <div class="d-flex gap-4 mt-2">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="consultType" id="typeOnsite" checked>
+                      <input class="form-check-input" type="radio" name="상담 유형" id="typeOnsite" value="(예약) 대면상담" checked>
                       <label class="form-check-label" for="typeOnsite">(예약) 대면상담 <span style="color: var(--rose-gold-primary); font-size: 12px;">(권장)</span></label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="consultType" id="typeOnline">
-                      <label class="form-check-label" for="typeOnline">온라인 상담</label>
+                      <input class="form-check-input" type="radio" name="상담 유형" id="typeOnline" value="온라인 상담 (이메일)">
+                      <label class="form-check-label" for="typeOnline">온라인 상담 (이메일)</label>
                     </div>
                   </div>
                   <p style="font-size: 12px; color: var(--light-text); margin-top: 8px;">
-                    ※ 온라인 상담은 정확한 사실관계 파악에 한계가 있으므로 보다 정확하고 효율적인 법률상담을 위해 대면 상담을 권유합니다.
+                    ※ 보다 정확하고 효율적인 법률상담을 위해 대면 상담을 권유합니다. 1.3.7 게시판 상담은 현재 준비 중입니다.
                   </p>
                 </div>
                 <div class="col-12" id="hopeDateTime">
                   <label class="form-label">(대면 상담) 희망 일시</label>
-                  <input type="text" class="form-control" placeholder="예: 화요일 오후 4시">
+                  <input type="text" class="form-control" name="희망 일시" id="fieldHopeDate" placeholder="예: 화요일 오후 4시">
                   <p style="font-size: 12px; color: var(--light-text); margin-top: 8px;">
                     ※ 정기 상담 시간: 매주 화요일 오후 3시반~5시반, 매주 목요일 오전 9시반~11시반, 오후 3시반~5시반
                   </p>
                 </div>
                 <div class="col-12">
                   <label class="form-label">상담 내용 (자유롭게 기재) *</label>
-                  <textarea class="form-control" rows="6" placeholder="상담받고 싶은 내용을 자유롭게 작성해 주세요. 사실관계와 분쟁 진행 상황을 상세히 기재해 주시면 더욱 효율적인 상담이 가능합니다." required></textarea>
+                  <textarea class="form-control" name="상담 내용" id="fieldContent" rows="6" placeholder="상담받고 싶은 내용을 자유롭게 작성해 주세요. 사실관계와 분쟁 진행 상황을 상세히 기재해 주시면 더욱 효율적인 상담이 가능합니다." required></textarea>
+                </div>
+
+                <!-- 파일 첨부 -->
+                <div class="col-12">
+                  <label class="form-label" for="fieldAttachment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 4px;">
+                      <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                    법률상담 신청서 첨부 *
+                  </label>
+                  
+                  <div id="fileDropZone" style="border: 2px dashed var(--rose-gold-light); border-radius: 12px; padding: 24px 20px; text-align: center; transition: all 0.3s ease; background: var(--rose-gold-lightest);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-medium)" stroke-width="2" style="width: 32px; height: 32px; margin-bottom: 8px;">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14,2 14,8 20,8"/>
+                      <line x1="12" y1="18" x2="12" y2="12"/>
+                      <line x1="9" y1="15" x2="12" y2="18"/>
+                      <line x1="15" y1="15" x2="12" y2="18"/>
+                    </svg>
+                    <p style="font-size: 14px; color: var(--medium-text); margin: 0 0 14px 0;" id="fileLabel">
+                      작성한 <strong>법률상담 신청서</strong>를 첨부하세요
+                    </p>
+                    
+                    <!-- 네이티브 파일 입력 (항상 보임, 항상 작동) -->
+                    <input type="file" name="attachment" id="fieldAttachment" 
+                      accept=".docx,.doc,.pdf,.hwp,.hwpx,.xlsx,.jpg,.png" required
+                      class="form-control" 
+                      style="max-width: 400px; margin: 0 auto; border: 1px solid var(--rose-gold-light); border-radius: 8px; padding: 8px; font-size: 14px; cursor: pointer;">
+                    
+                    <p style="font-size: 12px; color: var(--light-text); margin: 10px 0 0 0;">
+                      .docx, .pdf, .hwp 등 (최대 5MB)
+                    </p>
+                  </div>
+                  
+                  <!-- 첨부된 파일 표시 -->
+                  <div id="fileInfo" style="display: none; margin-top: 10px; padding: 12px 16px; background: white; border-radius: 10px; border: 1px solid var(--rose-gold-primary); box-shadow: 0 2px 8px rgba(156,92,92,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 22px; height: 22px;">
+                          <path d="M9 12l2 2 4-4"/>
+                          <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        <span id="fileName" style="font-size: 14px; font-weight: 600; color: var(--dark-text);"></span>
+                        <span id="fileSize" style="font-size: 12px; color: var(--light-text);"></span>
+                      </div>
+                      <button type="button" id="fileRemove" style="background: var(--rose-gold-lightest); border: 1px solid var(--rose-gold-light); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width: 14px; height: 14px;">
+                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 
                 <!-- 유의사항 -->
@@ -1908,10 +2345,16 @@
                 </div>
 
                 <div class="col-12 mt-4">
-                  <button type="submit" class="btn btn-submit">상담 신청하기</button>
+                  <button type="button" class="btn btn-submit" id="submitBtn" onclick="sendConsult()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; margin-right: 8px;">
+                      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/>
+                    </svg>
+                    상담 신청서 전송하기
+                  </button>
                   <p class="text-center mt-3" style="font-size: 13px; color: var(--medium-text);">
-                    또는 위 내용을 작성하여 <strong>Lclin@sookmyung.ac.kr</strong>로 직접 이메일을 보내주세요.
+                    버튼을 누르면 신청서와 첨부파일이 자동으로 전송됩니다.
                   </p>
+                  <div id="formResult" style="display:none; margin-top:16px; padding:20px; border-radius:12px; text-align:center;"></div>
                 </div>
               </div>
             </form>
@@ -1944,7 +2387,7 @@
             <li><a href="#about">소개</a></li>
             <li><a href="#services">서비스</a></li>
             <li><a href="#process">상담절차</a></li>
-            <li><a href="https://snowe.sookmyung.ac.kr/bbs5/boards/legalclinic" target="_blank">온라인 상담</a></li>
+            <li><a href="#consultation">온라인 상담 (이메일)</a></li>
           </ul>
         </div>
         <div class="col-lg-2 col-md-4">
@@ -1976,7 +2419,7 @@
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
-              Lclin@sookmyung.ac.kr
+              hyunjeong.shin@sookmyung.ac.kr
             </p>
           </div>
         </div>
@@ -2003,6 +2446,146 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script>
+    // File upload - UI updates only (클릭은 네이티브 input이 처리)
+    (function() {
+      var fileInput = document.getElementById('fieldAttachment');
+      var dropZone = document.getElementById('fileDropZone');
+      var fileInfo = document.getElementById('fileInfo');
+      var fileLabel = document.getElementById('fileLabel');
+
+      function showFileInfo(file) {
+        var sizeMB = (file.size / 1024 / 1024).toFixed(1);
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = '(' + sizeMB + 'MB)';
+        fileInfo.style.display = 'block';
+        dropZone.style.borderColor = 'var(--rose-gold-primary)';
+        dropZone.style.background = 'rgba(156, 92, 92, 0.06)';
+        fileLabel.innerHTML = '<strong style="color:var(--rose-gold-primary)">✓ 파일이 첨부되었습니다</strong>';
+      }
+
+      function resetUI() {
+        fileInfo.style.display = 'none';
+        dropZone.style.borderColor = 'var(--rose-gold-light)';
+        dropZone.style.background = 'var(--rose-gold-lightest)';
+        fileLabel.innerHTML = '작성한 <strong>법률상담 신청서</strong>를 첨부하세요';
+      }
+
+      // 파일 선택 시 정보 표시
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          var file = this.files[0];
+          if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기가 5MB를 초과합니다.');
+            this.value = '';
+            return;
+          }
+          showFileInfo(file);
+        } else {
+          resetUI();
+        }
+      });
+
+      // 파일 제거 버튼
+      document.getElementById('fileRemove').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.value = '';
+        resetUI();
+      });
+    })();
+
+    // ============================================================
+    // 자동 전송 (첨부파일 포함) - Google Apps Script 백엔드
+    // ============================================================
+    // ★ 아래 URL만 본인 것으로 바꾸면 끝 ★
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbzAxvG98VKHaPtg6vIBHdFqIvaSxAFn-lvsAZ2YHcAfUE3HgkY_cF4K3HcZxnoCsyQQGQ/exec";
+
+    function sendConsult() {
+      // 1. 체크박스 검증
+      var ids = ['agree1','agree2','agree3','agree4'];
+      for (var i = 0; i < ids.length; i++) {
+        if (!document.getElementById(ids[i]).checked) {
+          alert('모든 동의사항에 체크해 주세요.');
+          return;
+        }
+      }
+      // 2. 파일 검증
+      var fi = document.getElementById('fieldAttachment');
+      if (!fi.files || !fi.files.length) {
+        alert('법률상담 신청서를 첨부해 주세요.');
+        return;
+      }
+      var file = fi.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert('파일 크기가 5MB를 초과합니다.');
+        return;
+      }
+
+      // 3. 버튼 상태 변경
+      var btn = document.getElementById('submitBtn');
+      var origHTML = btn.innerHTML;
+      btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;animation:spin 1s linear infinite;" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 전송 중...</span>';
+      btn.disabled = true;
+
+      // 4. 파일을 Base64로 변환 후 전송
+      var reader = new FileReader();
+      reader.onload = function() {
+        var base64 = reader.result.split(',')[1]; // data:...;base64, 뒤의 데이터만
+
+        var payload = {
+          "성명": document.getElementById('fieldName').value,
+          "소속": document.getElementById('fieldAffiliation').value,
+          "연락처": document.getElementById('fieldPhone').value,
+          "이메일": document.getElementById('fieldEmail').value,
+          "상담유형": document.querySelector('input[name="상담 유형"]:checked').value,
+          "희망일시": document.getElementById('fieldHopeDate').value,
+          "상담내용": document.getElementById('fieldContent').value,
+          "파일명": file.name,
+          "파일타입": file.type,
+          "파일데이터": base64
+        };
+
+        fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        })
+        .then(function(r) { return r.text(); })
+        .then(function(text) {
+          try { var res = JSON.parse(text); } catch(e) { var res = { success: true }; }
+          showResult('success',
+            '✅ 전송 완료!',
+            payload["성명"] + '님의 상담 신청서가 첨부파일과 함께 전송되었습니다.<br>3일 이내 연락드리겠습니다.'
+          );
+          document.getElementById('consultForm').reset();
+          document.getElementById('fileInfo').style.display = 'none';
+          document.getElementById('fileDropZone').style.borderColor = 'var(--rose-gold-light)';
+          document.getElementById('fileDropZone').style.background = 'var(--rose-gold-lightest)';
+          document.getElementById('fileLabel').innerHTML = '작성한 <strong>법률상담 신청서</strong>를 첨부하세요';
+          btn.innerHTML = origHTML;
+          btn.disabled = false;
+        })
+        .catch(function(err) {
+          showResult('error',
+            '❌ 전송 실패',
+            '네트워크 오류입니다. 잠시 후 다시 시도해 주세요.<br>문제가 계속되면 hyunjeong.shin@sookmyung.ac.kr로 직접 보내주세요.'
+          );
+          btn.innerHTML = origHTML;
+          btn.disabled = false;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function showResult(type, title, msg) {
+      var el = document.getElementById('formResult');
+      var c = type === 'success'
+        ? { bg:'#E8F5E9', bd:'#66BB6A', tx:'#2E7D32' }
+        : { bg:'#FFEBEE', bd:'#EF5350', tx:'#B71C1C' };
+      el.style.cssText = 'display:block;margin-top:16px;padding:20px;border-radius:12px;text-align:center;background:'+c.bg+';border:1px solid '+c.bd;
+      el.innerHTML = '<h5 style="font-size:16px;font-weight:700;color:'+c.tx+';margin:0 0 8px;">'+title+'</h5><p style="font-size:14px;color:'+c.tx+';margin:0;line-height:1.6;">'+msg+'</p>';
+      el.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+
     // Navbar scroll effect
     window.addEventListener('scroll', function() {
       const navbar = document.getElementById('mainNav');
@@ -2016,8 +2599,10 @@
     // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (!href || href === '#') return;
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const target = document.querySelector(href);
         if (target) {
           const headerOffset = 80;
           const elementPosition = target.getBoundingClientRect().top;
@@ -2055,30 +2640,4 @@
     // Animation on scroll
     const observerOptions = {
       threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.feature-card, .process-step, .team-card, .schedule-card').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(el);
-    });
-
-    // Form submission handler
-    document.querySelector('form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      alert('상담 신청이 접수되었습니다.\n담당자 확인 후 연락드리겠습니다.');
-    });
-  </script>
-</body>
-</html>
+      rootMargin: '0px 0px -50px 0p
