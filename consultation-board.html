@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숙명 리걸클리닉 | 법률상담 게시판</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose-gold-dark: #7B3F3F;
+      --rose-gold-primary: #9C5C5C;
+      --rose-gold-medium: #B8847A;
+      --rose-gold-light: #D9C4BC;
+      --rose-gold-lighter: #F0E6E2;
+      --rose-gold-lightest: #FAF7F5;
+      --gold-accent: #C4956A;
+      --gold-light: #E8DBC8;
+      --dark-text: #3D2828;
+      --medium-text: #5C4444;
+      --light-text: #8B7070;
+      --border-color: rgba(123, 63, 63, 0.12);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --shadow-sm: 0 2px 8px rgba(123, 63, 63, 0.06);
+      --shadow-md: 0 4px 20px rgba(123, 63, 63, 0.10);
+      --shadow-lg: 0 8px 40px rgba(123, 63, 63, 0.12);
+      --status-pending: #E67E22;
+      --status-assigned: #2980B9;
+      --status-progress: #8E44AD;
+      --status-complete: #27AE60;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nanum Gothic', 'Pretendard', -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--rose-gold-lightest) 0%, #fff 50%, var(--rose-gold-lighter) 100%);
+      color: var(--dark-text);
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    .navbar-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 0;
+    }
+    .brand-title {
+      font-size: 22px; font-weight: 900; color: var(--rose-gold-dark);
+      font-family: 'Batang','바탕',serif; letter-spacing: 1px;
+    }
+    .brand-subtitle { font-size: 11px; color: var(--light-text); letter-spacing: 1px; }
+    .nav-link {
+      color: var(--medium-text)!important; font-weight: 500; font-size: 14px;
+      padding: 8px 14px!important; border-radius: 8px; transition: all .3s;
+    }
+    .nav-link:hover,.nav-link.active { color: var(--rose-gold-primary)!important; background: rgba(183,110,121,.08); }
+
+    /* ── Auth Bar ── */
+    .auth-bar {
+      background: linear-gradient(135deg, var(--rose-gold-dark), var(--rose-gold-primary));
+      color: white; padding: 10px 0; font-size: 14px;
+    }
+    .auth-bar .user-info { display: flex; align-items: center; gap: 10px; }
+    .auth-bar .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,.3);
+    }
+    .role-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+    }
+    .role-master { background: #F39C12; color: #fff; }
+    .role-lawyer { background: #3498DB; color: #fff; }
+    .role-clinic { background: #1ABC9C; color: #fff; }
+    .role-student { background: rgba(255,255,255,.2); color: #fff; }
+    .btn-auth {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: white; padding: 6px 18px; border-radius: 20px; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all .3s;
+    }
+    .btn-auth:hover { background: rgba(255,255,255,.3); }
+
+    /* ── Page Header ── */
+    .page-header {
+      background: linear-gradient(135deg, rgba(123,63,63,.92), rgba(156,92,92,.85));
+      padding: 50px 0 40px; color: white; text-align: center;
+    }
+    .page-header h1 {
+      font-family: 'Nanum Myeongjo',serif; font-size: 32px; font-weight: 800; margin-bottom: 10px;
+    }
+    .page-header p { font-size: 15px; opacity: .85; }
+
+    /* ── Security Notice ── */
+    .security-notice {
+      background: linear-gradient(135deg, #FFF3E0, #FFF8E1);
+      border: 1px solid #FFE0B2; border-radius: 12px;
+      padding: 16px 20px; margin: 20px 0; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .security-notice svg { width: 24px; height: 24px; color: #E65100; flex-shrink: 0; margin-top: 2px; }
+    .security-notice p { font-size: 13px; color: #5D4037; line-height: 1.6; margin: 0; }
+
+    /* ── Board Container ── */
+    .board-container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    /* ── Board Actions ── */
+    .board-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+    }
+    .board-stats { display: flex; gap: 16px; font-size: 13px; color: var(--medium-text); }
+    .board-stats .stat { display: flex; align-items: center; gap: 6px; }
+    .board-stats .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .btn-write {
+      background: linear-gradient(135deg, var(--rose-gold-primary), var(--rose-gold-dark));
+      color: white; border: none; padding: 10px 24px; border-radius: 25px;
+      font-weight: 700; font-size: 14px; cursor: pointer;
+      box-shadow: var(--shadow-md); transition: all .3s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-write:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    /* ── Table ── */
+    .board-table-wrap {
+      background: white; border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+    }
+    .board-table { width: 100%; border-collapse: collapse; }
+    .board-table thead th {
+      padding: 14px 16px; font-size: 13px; font-weight: 700;
+      color: var(--medium-text); background: var(--rose-gold-lightest);
+      border-bottom: 2px solid var(--rose-gold-light); text-align: center;
+      white-space: nowrap;
+    }
+    .board-table tbody tr {
+      border-bottom: 1px solid #f5f0ee; transition: background .2s; cursor: pointer;
+    }
+    .board-table tbody tr:hover { background: rgba(156,92,92,.03); }
+    .board-table td { padding: 14px 16px; font-size: 14px; text-align: center; vertical-align: middle; }
+    .board-table td.title-cell { text-align: left; }
+    .post-title { color: var(--dark-text); font-weight: 600; }
+    .post-title:hover { color: var(--rose-gold-primary); }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+    }
+    .status-pending { background: #FFF3E0; color: #E65100; }
+    .status-assigned { background: #E3F2FD; color: #1565C0; }
+    .status-progress { background: #F3E5F5; color: #6A1B9A; }
+    .status-complete { background: #E8F5E9; color: #2E7D32; }
+
+    .category-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+      background: var(--rose-gold-lighter); color: var(--rose-gold-dark);
+    }
+
+    .lawyer-name {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      background: #E3F2FD; color: #1565C0;
+    }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--light-text);
+    }
+    .empty-state svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: .4; }
+    .empty-state h3 { font-size: 18px; margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+      z-index: 1050; display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: white; border-radius: 20px; width: 100%; max-width: 700px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    .modal-header {
+      padding: 24px 28px 16px; border-bottom: 1px solid #f0e6e2;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; background: white; border-radius: 20px 20px 0 0; z-index: 2;
+    }
+    .modal-header h3 { font-size: 20px; font-weight: 800; color: var(--dark-text); }
+    .modal-close {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: var(--rose-gold-lightest); color: var(--medium-text);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .3s;
+    }
+    .modal-close:hover { background: var(--rose-gold-lighter); }
+    .modal-body { padding: 20px 28px 28px; }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 700;
+      color: var(--medium-text); margin-bottom: 6px;
+    }
+    .form-group label .required { color: #E53935; margin-left: 2px; }
+    .form-input {
+      width: 100%; padding: 12px 16px; border: 1.5px solid var(--rose-gold-light);
+      border-radius: 10px; font-size: 14px; font-family: inherit;
+      transition: all .3s; background: white; color: var(--dark-text);
+    }
+    .form-input:focus {
+      outline: none; border-color: var(--rose-gold-primary);
+      box-shadow: 0 0 0 3px rgba(156,92,92,.12);
+    }
+    .form-input::placeholder { color: var(--light-text); }
+    textarea.form-input { resize: vertical; min-height: 160px; line-height: 1.7; }
+    select.form-input { cursor: pointer; }
+
+    .form-actions {
+      display: flex; gap: 10px; justify-content: flex-end;
+      padding-top: 16px; border-top: 1px solid #f0e6e2;
+    }
+    .btn-primary-action {
+      background: linear-gradient(135deg, var(--rose-gold-primary), var(--rose-gold-dark));
+      color: white; border: none; padding: 12px 28px; border-radius: 25px;
+      font-weight: 700; font-size: 14px; cursor: pointer; transition: all .3s;
+    }
+    .btn-primary-action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-primary-action:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn-secondary-action {
+      background: var(--rose-gold-lightest); color: var(--medium-text);
+      border: 1px solid var(--rose-gold-light); padding: 12px 28px; border-radius: 25px;
+      font-weight: 600; font-size: 14px; cursor: pointer; transition: all .3s;
+    }
+    .btn-secondary-action:hover { background: var(--rose-gold-lighter); }
+
+    /* ── Post Detail ── */
+    .post-detail-header {
+      padding-bottom: 16px; border-bottom: 1px solid #f0e6e2; margin-bottom: 20px;
+    }
+    .post-detail-title { font-size: 22px; font-weight: 800; color: var(--dark-text); margin-bottom: 12px; }
+    .post-meta-row {
+      display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--light-text);
+    }
+    .post-meta-item { display: flex; align-items: center; gap: 5px; }
+    .post-content-body {
+      font-size: 15px; line-height: 1.8; color: var(--dark-text);
+      padding: 20px 0; min-height: 100px; white-space: pre-wrap;
+    }
+
+    /* ── Reply Section ── */
+    .reply-section {
+      background: #F8F6F4; border-radius: 12px; padding: 20px; margin-top: 20px;
+    }
+    .reply-section h4 {
+      font-size: 15px; font-weight: 700; color: var(--dark-text); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .reply-item {
+      background: white; border-radius: 10px; padding: 16px; margin-bottom: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .reply-author { font-size: 13px; font-weight: 700; color: var(--rose-gold-primary); margin-bottom: 4px; }
+    .reply-date { font-size: 11px; color: var(--light-text); }
+    .reply-body { font-size: 14px; line-height: 1.7; color: var(--dark-text); margin-top: 8px; white-space: pre-wrap; }
+
+    /* ── Lawyer Assign Button ── */
+    .btn-assign {
+      background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB;
+      padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 13px;
+      cursor: pointer; transition: all .3s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-assign:hover { background: #BBDEFB; }
+
+    /* ── Admin Panel ── */
+    .admin-panel {
+      background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+    }
+    .admin-panel h3 {
+      font-size: 16px; font-weight: 800; color: var(--dark-text); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lawyer-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .lawyer-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB;
+    }
+    .lawyer-chip .remove-btn {
+      width: 18px; height: 18px; border-radius: 50%; border: none;
+      background: rgba(21,101,192,.15); color: #1565C0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+    }
+    .add-lawyer-row { display: flex; gap: 8px; }
+    .add-lawyer-row input {
+      flex: 1; padding: 10px 14px; border: 1.5px solid var(--rose-gold-light);
+      border-radius: 10px; font-size: 13px; font-family: inherit;
+    }
+    .add-lawyer-row input:focus { outline: none; border-color: var(--rose-gold-primary); }
+    .btn-add-lawyer {
+      padding: 10px 20px; border-radius: 10px; border: none;
+      background: var(--rose-gold-primary); color: white;
+      font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;
+    }
+
+    /* ── Clinic Manager Email ── */
+    .email-panel {
+      background: #E0F7FA; border-radius: 10px; padding: 16px; margin-top: 16px;
+    }
+    .email-panel h5 { font-size: 14px; font-weight: 700; color: #006064; margin-bottom: 10px; }
+    .email-select { margin-bottom: 8px; }
+
+    /* ── Login Screen ── */
+    .login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: calc(100vh - 80px); padding: 40px 20px;
+    }
+    .login-card {
+      background: white; border-radius: 24px; padding: 48px 40px;
+      max-width: 440px; width: 100%; text-align: center;
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
+    }
+    .login-card h2 {
+      font-family: 'Nanum Myeongjo',serif; font-size: 26px; font-weight: 800;
+      color: var(--dark-text); margin-bottom: 12px;
+    }
+    .login-card p { font-size: 14px; color: var(--medium-text); line-height: 1.6; margin-bottom: 32px; }
+    .btn-google {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: white; border: 2px solid #e0dcd8; padding: 14px 32px;
+      border-radius: 30px; font-size: 15px; font-weight: 700; color: var(--dark-text);
+      cursor: pointer; transition: all .3s; width: 100%; justify-content: center;
+    }
+    .btn-google:hover { border-color: var(--rose-gold-primary); box-shadow: var(--shadow-md); }
+    .btn-google img { width: 20px; height: 20px; }
+    .login-note {
+      margin-top: 20px; font-size: 12px; color: var(--light-text); line-height: 1.6;
+    }
+
+    /* ── Loading Spinner ── */
+    .spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2.5px solid rgba(156,92,92,.2);
+      border-top-color: var(--rose-gold-primary);
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,.85); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+    }
+    .loading-overlay .spinner { width: 40px; height: 40px; border-width: 4px; }
+    .loading-overlay p { font-size: 15px; color: var(--medium-text); font-weight: 600; }
+
+    /* ── Pagination ── */
+    .pagination-wrap {
+      display: flex; justify-content: center; gap: 4px; margin-top: 24px;
+    }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--rose-gold-light);
+      background: white; color: var(--medium-text); font-size: 13px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .page-btn:hover { background: var(--rose-gold-lightest); }
+    .page-btn.active { background: var(--rose-gold-primary); color: white; border-color: var(--rose-gold-primary); }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+    .toast-msg {
+      background: white; border-radius: 12px; padding: 14px 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.15); font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+      animation: slideIn .3s ease;
+    }
+    .toast-msg.success { border-left: 4px solid #27AE60; }
+    .toast-msg.error { border-left: 4px solid #E53935; }
+    .toast-msg.info { border-left: 4px solid #2980B9; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .board-table th:nth-child(1), .board-table td:nth-child(1),
+      .board-table th:nth-child(5), .board-table td:nth-child(5) { display: none; }
+      .board-actions { flex-direction: column; }
+      .page-header h1 { font-size: 24px; }
+      .modal-box { margin: 10px; border-radius: 16px; }
+      .modal-body { padding: 16px 20px 20px; }
+      .admin-panel { padding: 16px; }
+    }
+
+    /* ── Hidden ── */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>보안 인증 중...</p>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar navbar-expand-lg navbar-glass sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html" style="text-decoration:none; display:flex; align-items:center; gap:12px;">
+        <div>
+          <div class="brand-title">숙명 리걸클리닉</div>
+          <div class="brand-subtitle">SOOKMYUNG LEGAL CLINIC</div>
+        </div>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="index.html" class="nav-link" style="font-size:13px;">← 홈으로</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--rose-gold-light),var(--rose-gold-lighter));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-dark)" stroke-width="2" style="width:36px;height:36px;">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h2>법률상담 게시판</h2>
+      <p>숙명 리걸클리닉 법률상담 게시판에 접속하려면<br>Google 계정으로 로그인해 주세요.</p>
+      <button id="btnGoogleLogin" class="btn-google" onclick="handleLogin()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Google 계정으로 로그인
+      </button>
+      <p class="login-note">
+        🔒 숙명 이메일(@sookmyung.ac.kr / @sm.ac.kr) 또는<br>
+        등록된 변호사 계정으로만 이용 가능합니다.<br>
+        모든 상담 내용은 암호화되어 안전하게 보호됩니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ BOARD (로그인 후) ============ -->
+  <div id="boardArea" class="hidden">
+    <!-- Auth Bar -->
+    <div class="auth-bar">
+      <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="user-info">
+          <img id="userAvatar" class="user-avatar" src="" alt="">
+          <div>
+            <strong id="userName" style="font-size:14px;"></strong>
+            <span id="userRole" class="role-badge role-student ms-2"></span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span id="userEmail" style="font-size:12px;opacity:.7;"></span>
+          <button class="btn-auth" onclick="handleLogout()">로그아웃</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <h1>🔒 법률상담 게시판</h1>
+        <p>상담 내용은 본인과 배정된 변호사만 열람할 수 있습니다</p>
+      </div>
+    </div>
+
+    <div class="board-container">
+      <!-- Security Notice -->
+      <div class="security-notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <div>
+          <p><strong>보안 안내:</strong> 이 게시판은 숙명 리걸클리닉 법률상담 전용입니다.
+            모든 상담 내용은 <strong>작성자 본인</strong>과 <strong>배정된 상담 변호사</strong>만 열람할 수 있으며,
+            Firestore 보안 규칙에 의해 데이터베이스 레벨에서 접근이 제어됩니다.
+            관리자는 게시판 관리 권한만 가지며, 상담 내용에 접근할 수 없습니다.</p>
+        </div>
+      </div>
+
+      <!-- Admin Panel (Masters only) -->
+      <div id="adminPanel" class="admin-panel hidden">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width:20px;height:20px;">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          관리자 패널 — 변호사 등록/관리
+        </h3>
+        <p style="font-size:13px;color:var(--light-text);margin-bottom:16px;">
+          등록된 변호사는 모든 상담 게시물을 열람하고 자신을 배정할 수 있습니다.
+          (관리자, 클리닉 매니저, 법학연구소가 변호사를 등록/삭제할 수 있습니다)
+        </p>
+        <div id="lawyerList" class="lawyer-list"></div>
+        <div class="add-lawyer-row">
+          <input type="email" id="newLawyerEmail" placeholder="변호사 이메일 주소 (예: lawyer@gmail.com)" />
+          <button class="btn-add-lawyer" onclick="addLawyer()">+ 변호사 등록</button>
+        </div>
+      </div>
+
+      <!-- Clinic Manager Panel -->
+      <div id="clinicPanel" class="admin-panel hidden">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1ABC9C" stroke-width="2" style="width:20px;height:20px;">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          클리닉 관리 — 변호사 이메일 발송
+        </h3>
+        <p style="font-size:13px;color:var(--light-text);margin-bottom:12px;">
+          대기 중인 상담 건에 대해 변호사에게 배정 요청 이메일을 보낼 수 있습니다.
+          (상담 내용은 열람할 수 없습니다)
+        </p>
+        <div id="emailLawyerSelect"></div>
+        <button class="btn-primary-action" style="margin-top:12px;font-size:13px;padding:10px 20px;" onclick="sendLawyerEmail()">
+          📧 변호사에게 이메일 발송
+        </button>
+      </div>
+
+      <!-- Board Actions -->
+      <div class="board-actions">
+        <div class="board-stats">
+          <div class="stat"><div class="dot" style="background:var(--status-pending);"></div> 대기 <strong id="countPending">0</strong></div>
+          <div class="stat"><div class="dot" style="background:var(--status-assigned);"></div> 배정 <strong id="countAssigned">0</strong></div>
+          <div class="stat"><div class="dot" style="background:var(--status-progress);"></div> 진행 <strong id="countProgress">0</strong></div>
+          <div class="stat"><div class="dot" style="background:var(--status-complete);"></div> 완료 <strong id="countComplete">0</strong></div>
+        </div>
+        <button id="btnWrite" class="btn-write hidden" onclick="openWriteModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          상담 신청하기
+        </button>
+      </div>
+
+      <!-- Board Table -->
+      <div class="board-table-wrap">
+        <table class="board-table">
+          <thead>
+            <tr>
+              <th style="width:50px;">번호</th>
+              <th style="width:80px;">분류</th>
+              <th>제목</th>
+              <th style="width:90px;">상태</th>
+              <th style="width:100px;">담당변호사</th>
+              <th style="width:90px;">등록일</th>
+            </tr>
+          </thead>
+          <tbody id="boardBody">
+            <!-- Dynamic content -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10,9 9,9 8,9"/>
+        </svg>
+        <h3 id="emptyTitle">상담 신청 내역이 없습니다</h3>
+        <p id="emptyDesc">새로운 법률상담을 신청하려면 '상담 신청하기' 버튼을 클릭하세요.</p>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="pagination-wrap hidden"></div>
+    </div>
+  </div>
+
+  <!-- ============ WRITE MODAL ============ -->
+  <div id="writeModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📝 법률상담 신청</h3>
+        <button class="modal-close" onclick="closeModal('writeModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="security-notice" style="margin-top:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <p>작성하신 상담 내용은 <strong>본인</strong>과 <strong>배정된 변호사</strong>, <strong>관리자(마스터)</strong>만 열람할 수 있습니다. 
+            안심하고 상세히 작성해 주세요.</p>
+        </div>
+        <div class="form-group">
+          <label>상담 분류 <span class="required">*</span></label>
+          <select id="writeCategory" class="form-input">
+            <option value="">분류를 선택해 주세요</option>
+            <option value="성범죄">성범죄 상담</option>
+            <option value="노동">노동 상담</option>
+            <option value="상속">상속 상담</option>
+            <option value="부동산">부동산 상담</option>
+            <option value="가족법">가족법 상담</option>
+            <option value="계약/민사">계약/민사 상담</option>
+            <option value="형사">형사 상담</option>
+            <option value="기타">기타 상담</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>제목 <span class="required">*</span></label>
+          <input type="text" id="writeTitle" class="form-input" placeholder="상담 제목을 입력해 주세요" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label>상담 내용 <span class="required">*</span></label>
+          <textarea id="writeContent" class="form-input" placeholder="법률 문제의 구체적인 사실관계와 궁금하신 점을 상세히 작성해 주세요.&#10;&#10;※ 정확한 상담을 위해 가능한 한 구체적으로 작성해 주시면 도움이 됩니다.&#10;※ 민감한 개인정보(주민등록번호 등)는 기재하지 마세요."></textarea>
+        </div>
+        <div class="form-group">
+          <label>연락처 (선택)</label>
+          <input type="text" id="writeContact" class="form-input" placeholder="연락받을 전화번호 또는 이메일 (선택사항)">
+        </div>
+        <div style="background:#F3E5F5;border-radius:10px;padding:14px;margin-bottom:16px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4A148C;line-height:1.5;">
+            <input type="checkbox" id="writeAgree" style="margin-top:3px;">
+            상담 내용이 배정된 변호사에게 공유되는 것에 동의합니다. 
+            법률상담의 모든 활동에 학교의 법적 책임이 전혀 없음을 확인합니다.
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary-action" onclick="closeModal('writeModal')">취소</button>
+          <button class="btn-primary-action" onclick="submitPost()">상담 신청하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DETAIL MODAL ============ -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📋 상담 상세 내용</h3>
+        <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      </div>
+      <div class="modal-body" id="detailBody">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FIREBASE SDK ============ -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  ⚙️ Firebase 설정 — 아래 값을 본인의 Firebase 프로젝트 값으로 교체  ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    const firebaseConfig = {
+      apiKey: "AIzaSyC64VvzGpqdmJPCaw3SwizJ1UskXgcliB8",
+      authDomain: "sookmyung-legalclinic.firebaseapp.com",
+      projectId: "sookmyung-legalclinic",
+      storageBucket: "sookmyung-legalclinic.firebasestorage.app",
+      messagingSenderId: "449471033203",
+      appId: "1:449471033203:web:8e0f1d90ad91f2f112df06",
+      measurementId: "G-Z2T96TYSM9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🔐 역할 정의 (Role-Based Access Control)                      ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    const ROLES = {
+      MASTER: 'master',
+      LAWYER: 'lawyer',
+      CLINIC_MANAGER: 'clinic_manager',
+      STUDENT: 'student',
+      BLOCKED: 'blocked'
+    };
+
+    // 하드코딩된 마스터 관리자 (Firestore에도 저장)
+    const MASTER_EMAILS = [
+      'smssky@sookmyung.ac.kr',
+      'fmlaw@sookmyung.ac.kr'
+    ];
+
+    // 클리닉 매니저 + 법학연구소 (게시판 관리 + 변호사 등록 권한)
+    const CLINIC_MANAGER_EMAILS = [
+      'lclin@sookmyung.ac.kr',
+      'lawi@sookmyung.ac.kr'
+    ];
+
+    // 차단된 이메일 (Firebase 구현자 - 상담 내용 열람 불가)
+    const BLOCKED_EMAILS = [
+      'twinky0509@gmail.com'
+    ];
+
+    // 숙명 도메인 확인
+    function isSookmyungEmail(email) {
+      const lower = email.toLowerCase();
+      return lower.endsWith('@sookmyung.ac.kr') || lower.endsWith('@sm.ac.kr');
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🏗️ 앱 상태                                                    ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    let currentUser = null;
+    let currentRole = ROLES.BLOCKED;
+    let lawyerEmails = [];
+    let allPosts = [];
+    let currentPage = 1;
+    const POSTS_PER_PAGE = 15;
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🔑 인증 (Authentication)                                       ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        await determineRole(user);
+        
+        if (currentRole === ROLES.BLOCKED) {
+          showToast('이 계정은 게시판 접근이 제한되어 있습니다.', 'error');
+          auth.signOut();
+          return;
+        }
+
+        showBoard();
+        await loadLawyers();
+        await loadPosts();
+      } else {
+        currentUser = null;
+        currentRole = ROLES.BLOCKED;
+        showLogin();
+      }
+      hideLoading();
+    });
+
+    async function handleLogin() {
+      try {
+        document.getElementById('btnGoogleLogin').disabled = true;
+        document.getElementById('btnGoogleLogin').innerHTML = '<div class="spinner"></div> 로그인 중...';
+        await auth.signInWithPopup(provider);
+      } catch (err) {
+        console.error('Login error:', err);
+        showToast('로그인에 실패했습니다: ' + err.message, 'error');
+        document.getElementById('btnGoogleLogin').disabled = false;
+        document.getElementById('btnGoogleLogin').innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px;"> Google 계정으로 로그인';
+      }
+    }
+
+    function handleLogout() {
+      if (confirm('로그아웃 하시겠습니까?')) {
+        auth.signOut();
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  👤 역할 판별                                                    ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function determineRole(user) {
+      const email = user.email.toLowerCase();
+
+      // 1) 차단 확인
+      if (BLOCKED_EMAILS.includes(email)) {
+        currentRole = ROLES.BLOCKED;
+        return;
+      }
+
+      // 2) 마스터 확인
+      if (MASTER_EMAILS.includes(email)) {
+        currentRole = ROLES.MASTER;
+        // Firestore에 마스터 역할 보장
+        await ensureRolesDoc();
+        return;
+      }
+
+      // 3) 클리닉 매니저 확인
+      if (CLINIC_MANAGER_EMAILS.includes(email)) {
+        currentRole = ROLES.CLINIC_MANAGER;
+        return;
+      }
+
+      // 4) 등록된 변호사 확인 (Firestore)
+      try {
+        const rolesDoc = await db.collection('roles').doc('config').get();
+        if (rolesDoc.exists) {
+          const data = rolesDoc.data();
+          const lawyers = (data.lawyers || []).map(e => e.toLowerCase());
+          if (lawyers.includes(email)) {
+            currentRole = ROLES.LAWYER;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Roles check failed:', e);
+      }
+
+      // 5) 숙명 이메일이면 학생
+      if (isSookmyungEmail(email)) {
+        currentRole = ROLES.STUDENT;
+        return;
+      }
+
+      // 6) 나머지는 차단
+      currentRole = ROLES.BLOCKED;
+    }
+
+    async function ensureRolesDoc() {
+      try {
+        const ref = db.collection('roles').doc('config');
+        const doc = await ref.get();
+        if (!doc.exists) {
+          await ref.set({
+            masters: MASTER_EMAILS,
+            lawyers: [],
+            clinic_managers: ['lclin@sookmyung.ac.kr', 'lawi@sookmyung.ac.kr'],
+            blocked: BLOCKED_EMAILS,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          // 마스터 목록 동기화
+          const data = doc.data();
+          const existingMasters = data.masters || [];
+          const needsUpdate = MASTER_EMAILS.some(m => !existingMasters.includes(m));
+          if (needsUpdate) {
+            await ref.update({
+              masters: firebase.firestore.FieldValue.arrayUnion(...MASTER_EMAILS)
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('ensureRolesDoc:', e);
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🖥️ UI 전환                                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('boardArea').classList.add('hidden');
+    }
+
+    function showBoard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('boardArea').classList.remove('hidden');
+
+      // 사용자 정보 표시
+      document.getElementById('userAvatar').src = currentUser.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239C5C5C"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>';
+      document.getElementById('userName').textContent = currentUser.displayName || '사용자';
+      document.getElementById('userEmail').textContent = currentUser.email;
+
+      // 역할 배지
+      const roleEl = document.getElementById('userRole');
+      const roleConfig = {
+        [ROLES.MASTER]: { text: '👑 관리자', class: 'role-master' },
+        [ROLES.LAWYER]: { text: '⚖️ 변호사', class: 'role-lawyer' },
+        [ROLES.CLINIC_MANAGER]: { text: '📋 클리닉 관리', class: 'role-clinic' },
+        [ROLES.STUDENT]: { text: '🎓 학생', class: 'role-student' }
+      };
+      const rc = roleConfig[currentRole] || { text: '사용자', class: 'role-student' };
+      roleEl.textContent = rc.text;
+      roleEl.className = 'role-badge ' + rc.class;
+
+      // 역할별 UI 표시
+      // 학생 & 마스터: 글쓰기 가능
+      if (currentRole === ROLES.STUDENT || currentRole === ROLES.MASTER) {
+        document.getElementById('btnWrite').classList.remove('hidden');
+      }
+
+      // 마스터: 관리자 패널 표시
+      if (currentRole === ROLES.MASTER) {
+        document.getElementById('adminPanel').classList.remove('hidden');
+      }
+
+      // 클리닉 매니저: 관리자 패널(변호사 등록) + 이메일 패널 표시
+      if (currentRole === ROLES.CLINIC_MANAGER) {
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('clinicPanel').classList.remove('hidden');
+      }
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  👨‍⚖️ 변호사 관리 (마스터 전용)                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function loadLawyers() {
+      try {
+        const doc = await db.collection('roles').doc('config').get();
+        if (doc.exists) {
+          lawyerEmails = doc.data().lawyers || [];
+        }
+        renderLawyerList();
+        renderLawyerSelect();
+      } catch (e) {
+        console.warn('loadLawyers:', e);
+      }
+    }
+
+    function renderLawyerList() {
+      const container = document.getElementById('lawyerList');
+      if (!container) return;
+      if (lawyerEmails.length === 0) {
+        container.innerHTML = '<p style="font-size:13px;color:var(--light-text);">등록된 변호사가 없습니다.</p>';
+        return;
+      }
+      container.innerHTML = lawyerEmails.map((email, i) => `
+        <div class="lawyer-chip">
+          ⚖️ ${email}
+          <button class="remove-btn" onclick="removeLawyer(${i})" title="삭제">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function renderLawyerSelect() {
+      const container = document.getElementById('emailLawyerSelect');
+      if (!container) return;
+      container.innerHTML = lawyerEmails.map(email => `
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" class="lawyer-email-checkbox" value="${email}">
+          ${email}
+        </label>
+      `).join('');
+    }
+
+    async function addLawyer() {
+      if (currentRole !== ROLES.MASTER && currentRole !== ROLES.CLINIC_MANAGER) return;
+      const input = document.getElementById('newLawyerEmail');
+      const email = input.value.trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        showToast('올바른 이메일 주소를 입력해 주세요.', 'error');
+        return;
+      }
+      if (lawyerEmails.includes(email)) {
+        showToast('이미 등록된 변호사입니다.', 'error');
+        return;
+      }
+      if (BLOCKED_EMAILS.includes(email)) {
+        showToast('이 이메일은 등록할 수 없습니다.', 'error');
+        return;
+      }
+
+      try {
+        await db.collection('roles').doc('config').update({
+          lawyers: firebase.firestore.FieldValue.arrayUnion(email),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        lawyerEmails.push(email);
+        renderLawyerList();
+        renderLawyerSelect();
+        input.value = '';
+        showToast(`${email} 변호사가 등록되었습니다.`, 'success');
+      } catch (e) {
+        showToast('등록 실패: ' + e.message, 'error');
+      }
+    }
+
+    async function removeLawyer(index) {
+      if (currentRole !== ROLES.MASTER && currentRole !== ROLES.CLINIC_MANAGER) return;
+      const email = lawyerEmails[index];
+      if (!confirm(`${email} 변호사를 목록에서 제거하시겠습니까?`)) return;
+
+      try {
+        await db.collection('roles').doc('config').update({
+          lawyers: firebase.firestore.FieldValue.arrayRemove(email),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        lawyerEmails.splice(index, 1);
+        renderLawyerList();
+        renderLawyerSelect();
+        showToast('변호사가 제거되었습니다.', 'info');
+      } catch (e) {
+        showToast('제거 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  📧 클리닉 매니저 이메일 발송                                        ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    function sendLawyerEmail() {
+      const checked = document.querySelectorAll('.lawyer-email-checkbox:checked');
+      if (checked.length === 0) {
+        showToast('이메일을 보낼 변호사를 선택해 주세요.', 'error');
+        return;
+      }
+      const emails = Array.from(checked).map(cb => cb.value);
+      const subject = encodeURIComponent('[숙명 리걸클리닉] 법률상담 배정 요청');
+      const body = encodeURIComponent(
+        '안녕하세요, 숙명 리걸클리닉입니다.\n\n' +
+        '새로운 법률상담 신청이 접수되었습니다.\n' +
+        '아래 링크에서 상담 게시판을 확인하시고, 상담 가능한 건에 배정을 부탁드립니다.\n\n' +
+        '게시판 주소: ' + window.location.href + '\n\n' +
+        '감사합니다.\n숙명 리걸클리닉 드림'
+      );
+      const mailto = `mailto:${emails.join(',')}?subject=${subject}&body=${body}`;
+      window.open(mailto);
+      showToast('이메일 클라이언트가 열립니다.', 'info');
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  📝 게시물 CRUD                                                  ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function loadPosts() {
+      try {
+        let query;
+        
+        if (currentRole === ROLES.MASTER || currentRole === ROLES.LAWYER) {
+          // 마스터/변호사: 모든 게시물 조회
+          query = db.collection('consultations')
+            .orderBy('createdAt', 'desc');
+        } else if (currentRole === ROLES.CLINIC_MANAGER) {
+          // 클리닉 매니저: 모든 게시물 메타데이터만 조회 (UI에서 내용 숨김)
+          query = db.collection('consultations')
+            .orderBy('createdAt', 'desc');
+        } else if (currentRole === ROLES.STUDENT) {
+          // 학생: 자기 게시물만 조회
+          query = db.collection('consultations')
+            .where('authorEmail', '==', currentUser.email.toLowerCase())
+            .orderBy('createdAt', 'desc');
+        } else {
+          allPosts = [];
+          renderBoard();
+          return;
+        }
+
+        const snapshot = await query.get();
+        allPosts = [];
+        snapshot.forEach(doc => {
+          allPosts.push({ id: doc.id, ...doc.data() });
+        });
+
+        renderBoard();
+        updateStats();
+      } catch (e) {
+        console.error('loadPosts error:', e);
+        showToast('게시물 로드 실패. 인덱스 생성이 필요할 수 있습니다.', 'error');
+      }
+    }
+
+    function renderBoard() {
+      const body = document.getElementById('boardBody');
+      const empty = document.getElementById('emptyState');
+      const pagWrap = document.getElementById('pagination');
+
+      if (allPosts.length === 0) {
+        body.innerHTML = '';
+        empty.classList.remove('hidden');
+        pagWrap.classList.add('hidden');
+
+        if (currentRole === ROLES.CLINIC_MANAGER) {
+          document.getElementById('emptyTitle').textContent = '접수된 상담이 없습니다';
+          document.getElementById('emptyDesc').textContent = '';
+        }
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      // 페이지네이션
+      const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+      const start = (currentPage - 1) * POSTS_PER_PAGE;
+      const paginated = allPosts.slice(start, start + POSTS_PER_PAGE);
+
+      body.innerHTML = paginated.map((post, i) => {
+        const num = allPosts.length - start - i;
+        const date = post.createdAt ? formatDate(post.createdAt) : '-';
+        const statusHTML = getStatusBadge(post.status);
+        const lawyerHTML = post.assignedLawyerName 
+          ? `<span class="lawyer-name">⚖️ ${post.assignedLawyerName}</span>` 
+          : '<span style="color:var(--light-text);font-size:12px;">미배정</span>';
+        const categoryHTML = post.category 
+          ? `<span class="category-badge">${post.category}</span>` : '-';
+
+        // 클리닉 매니저는 제목만 보이고 클릭 불가
+        const titleClick = currentRole === ROLES.CLINIC_MANAGER 
+          ? '' 
+          : `onclick="openDetail('${post.id}')" style="cursor:pointer;"`;
+
+        return `
+          <tr ${titleClick}>
+            <td style="color:var(--light-text);font-size:13px;">${num}</td>
+            <td>${categoryHTML}</td>
+            <td class="title-cell">
+              <span class="post-title">${escapeHTML(post.title || '(제목 없음)')}</span>
+              ${post.replyCount ? `<span style="color:var(--rose-gold-primary);font-size:12px;margin-left:6px;">[${post.replyCount}]</span>` : ''}
+            </td>
+            <td>${statusHTML}</td>
+            <td>${lawyerHTML}</td>
+            <td style="color:var(--light-text);font-size:13px;">${date}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // 페이지네이션 렌더링
+      if (totalPages > 1) {
+        pagWrap.classList.remove('hidden');
+        let pagHTML = '';
+        for (let p = 1; p <= totalPages; p++) {
+          pagHTML += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+        }
+        pagWrap.innerHTML = pagHTML;
+      } else {
+        pagWrap.classList.add('hidden');
+      }
+    }
+
+    function goPage(p) {
+      currentPage = p;
+      renderBoard();
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
+    function updateStats() {
+      let pending = 0, assigned = 0, progress = 0, complete = 0;
+      allPosts.forEach(p => {
+        if (p.status === 'pending') pending++;
+        else if (p.status === 'assigned') assigned++;
+        else if (p.status === 'in_progress') progress++;
+        else if (p.status === 'completed') complete++;
+      });
+      document.getElementById('countPending').textContent = pending;
+      document.getElementById('countAssigned').textContent = assigned;
+      document.getElementById('countProgress').textContent = progress;
+      document.getElementById('countComplete').textContent = complete;
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  ✏️ 글쓰기                                                      ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    function openWriteModal() {
+      if (currentRole !== ROLES.STUDENT && currentRole !== ROLES.MASTER) return;
+      document.getElementById('writeCategory').value = '';
+      document.getElementById('writeTitle').value = '';
+      document.getElementById('writeContent').value = '';
+      document.getElementById('writeContact').value = '';
+      document.getElementById('writeAgree').checked = false;
+      openModal('writeModal');
+    }
+
+    async function submitPost() {
+      const category = document.getElementById('writeCategory').value;
+      const title = document.getElementById('writeTitle').value.trim();
+      const content = document.getElementById('writeContent').value.trim();
+      const contact = document.getElementById('writeContact').value.trim();
+      const agreed = document.getElementById('writeAgree').checked;
+
+      if (!category) { showToast('상담 분류를 선택해 주세요.', 'error'); return; }
+      if (!title) { showToast('제목을 입력해 주세요.', 'error'); return; }
+      if (!content) { showToast('상담 내용을 입력해 주세요.', 'error'); return; }
+      if (!agreed) { showToast('동의사항에 체크해 주세요.', 'error'); return; }
+
+      try {
+        // 1) 메타데이터 저장 (consultations 컬렉션)
+        const postRef = await db.collection('consultations').add({
+          title: title,
+          category: category,
+          authorEmail: currentUser.email.toLowerCase(),
+          authorName: currentUser.displayName || '익명',
+          authorUid: currentUser.uid,
+          status: 'pending',
+          assignedLawyer: null,
+          assignedLawyerName: null,
+          contact: contact || null,
+          replyCount: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 2) 상담 내용 저장 (별도 컬렉션 — 보안 분리)
+        await db.collection('consultation_contents').doc(postRef.id).set({
+          body: content,
+          authorEmail: currentUser.email.toLowerCase(),
+          authorUid: currentUser.uid,
+          assignedLawyer: null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        closeModal('writeModal');
+        showToast('상담이 성공적으로 신청되었습니다.', 'success');
+        await loadPosts();
+      } catch (e) {
+        console.error('Submit error:', e);
+        showToast('신청 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  📖 상세 보기                                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function openDetail(postId) {
+      if (currentRole === ROLES.CLINIC_MANAGER || currentRole === ROLES.BLOCKED) return;
+
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      const detailBody = document.getElementById('detailBody');
+      detailBody.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div><p style="margin-top:12px;font-size:14px;color:var(--light-text);">불러오는 중...</p></div>';
+      openModal('detailModal');
+
+      try {
+        // 상담 내용 로드 (보안: 본인, 변호사, 마스터만)
+        let contentBody = '';
+        let canReadContent = false;
+
+        if (currentRole === ROLES.MASTER) {
+          canReadContent = true;
+        } else if (currentRole === ROLES.LAWYER) {
+          canReadContent = true;
+        } else if (currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase()) {
+          canReadContent = true;
+        }
+
+        if (canReadContent) {
+          try {
+            const contentDoc = await db.collection('consultation_contents').doc(postId).get();
+            if (contentDoc.exists) {
+              contentBody = contentDoc.data().body || '';
+            }
+          } catch (e) {
+            contentBody = '⚠️ 내용을 불러올 수 없습니다 (권한 부족).';
+          }
+        } else {
+          contentBody = '🔒 열람 권한이 없습니다.';
+        }
+
+        // 답변 로드
+        let repliesHTML = '';
+        try {
+          const repliesSnap = await db.collection('consultation_contents').doc(postId)
+            .collection('replies').orderBy('createdAt', 'asc').get();
+          
+          if (!repliesSnap.empty) {
+            const replyItems = [];
+            repliesSnap.forEach(doc => {
+              replyItems.push(doc.data());
+            });
+            repliesHTML = replyItems.map(r => `
+              <div class="reply-item">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="reply-author">⚖️ ${escapeHTML(r.authorName || '변호사')}</span>
+                  <span class="reply-date">${r.createdAt ? formatDate(r.createdAt) : ''}</span>
+                </div>
+                <div class="reply-body">${escapeHTML(r.body || '')}</div>
+              </div>
+            `).join('');
+          }
+        } catch (e) {
+          console.warn('Replies load error:', e);
+        }
+
+        // 변호사 배정 버튼
+        let assignHTML = '';
+        if (currentRole === ROLES.LAWYER && !post.assignedLawyer) {
+          assignHTML = `
+            <button class="btn-assign" onclick="assignSelf('${postId}')">
+              ✋ 이 상담을 맡겠습니다 (나를 배정)
+            </button>
+          `;
+        } else if (currentRole === ROLES.MASTER && !post.assignedLawyer) {
+          assignHTML = `
+            <div style="margin-top:12px;">
+              <select id="assignLawyerSelect" class="form-input" style="max-width:300px;display:inline-block;font-size:13px;">
+                <option value="">변호사를 선택하세요</option>
+                ${lawyerEmails.map(e => `<option value="${e}">${e}</option>`).join('')}
+              </select>
+              <button class="btn-assign" style="margin-left:8px;" onclick="assignLawyer('${postId}')">배정하기</button>
+            </div>
+          `;
+        }
+
+        // 상태 변경 (마스터/배정된 변호사)
+        let statusChangeHTML = '';
+        if (currentRole === ROLES.MASTER || (currentRole === ROLES.LAWYER && post.assignedLawyer === currentUser.email.toLowerCase())) {
+          statusChangeHTML = `
+            <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','pending')">⏳ 대기</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','assigned')">📋 배정</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','in_progress')">🔄 진행중</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','completed')">✅ 완료</button>
+            </div>
+          `;
+        }
+
+        // 답변 작성 (변호사/마스터)
+        let replyFormHTML = '';
+        if (currentRole === ROLES.LAWYER || currentRole === ROLES.MASTER) {
+          replyFormHTML = `
+            <div style="margin-top:16px;">
+              <textarea id="replyInput" class="form-input" placeholder="변호사 답변을 작성해 주세요..." style="min-height:100px;"></textarea>
+              <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;" onclick="submitReply('${postId}')">답변 등록</button>
+            </div>
+          `;
+        }
+
+        // 삭제 버튼 (마스터만)
+        let deleteHTML = '';
+        if (currentRole === ROLES.MASTER) {
+          deleteHTML = `
+            <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+              onclick="deletePost('${postId}')">🗑️ 게시물 삭제</button>
+          `;
+        }
+
+        detailBody.innerHTML = `
+          <div class="post-detail-header">
+            <div style="margin-bottom:8px;">${post.category ? `<span class="category-badge">${post.category}</span>` : ''} ${getStatusBadge(post.status)}</div>
+            <h2 class="post-detail-title">${escapeHTML(post.title)}</h2>
+            <div class="post-meta-row">
+              <div class="post-meta-item">👤 ${escapeHTML(post.authorName || '익명')}</div>
+              <div class="post-meta-item">📧 ${maskEmail(post.authorEmail)}</div>
+              <div class="post-meta-item">📅 ${post.createdAt ? formatDate(post.createdAt) : '-'}</div>
+              ${post.assignedLawyerName ? `<div class="post-meta-item"><span class="lawyer-name">⚖️ ${escapeHTML(post.assignedLawyerName)}</span></div>` : ''}
+            </div>
+          </div>
+
+          <div class="post-content-body">${escapeHTML(contentBody)}</div>
+
+          ${assignHTML}
+          ${statusChangeHTML}
+
+          ${repliesHTML || replyFormHTML ? `
+            <div class="reply-section">
+              <h4>💬 변호사 답변 ${repliesHTML ? '' : '(아직 답변이 없습니다)'}</h4>
+              ${repliesHTML}
+              ${replyFormHTML}
+            </div>
+          ` : ''}
+
+          ${deleteHTML}
+        `;
+      } catch (e) {
+        console.error('Detail load error:', e);
+        detailBody.innerHTML = '<p style="text-align:center;color:var(--light-text);padding:40px;">내용을 불러올 수 없습니다.</p>';
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  ⚖️ 변호사 배정                                                   ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function assignSelf(postId) {
+      if (currentRole !== ROLES.LAWYER) return;
+      if (!confirm('이 상담 건에 자신을 배정하시겠습니까?')) return;
+
+      try {
+        const batch = db.batch();
+        const postRef = db.collection('consultations').doc(postId);
+        const contentRef = db.collection('consultation_contents').doc(postId);
+
+        batch.update(postRef, {
+          assignedLawyer: currentUser.email.toLowerCase(),
+          assignedLawyerName: currentUser.displayName || currentUser.email,
+          status: 'assigned',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        batch.update(contentRef, {
+          assignedLawyer: currentUser.email.toLowerCase()
+        });
+
+        await batch.commit();
+        showToast('배정되었습니다.', 'success');
+        closeModal('detailModal');
+        await loadPosts();
+      } catch (e) {
+        showToast('배정 실패: ' + e.message, 'error');
+      }
+    }
+
+    async function assignLawyer(postId) {
+      if (currentRole !== ROLES.MASTER) return;
+      const select = document.getElementById('assignLawyerSelect');
+      const email = select.value;
+      if (!email) { showToast('변호사를 선택해 주세요.', 'error'); return; }
+
+      try {
+        const batch = db.batch();
+        const postRef = db.collection('consultations').doc(postId);
+        const contentRef = db.collection('consultation_contents').doc(postId);
+
+        batch.update(postRef, {
+          assignedLawyer: email,
+          assignedLawyerName: email,
+          status: 'assigned',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        batch.update(contentRef, {
+          assignedLawyer: email
+        });
+
+        await batch.commit();
+        showToast(`${email}에게 배정되었습니다.`, 'success');
+        closeModal('detailModal');
+        await loadPosts();
+      } catch (e) {
+        showToast('배정 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  💬 답변 등록                                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function submitReply(postId) {
+      const input = document.getElementById('replyInput');
+      const body = input.value.trim();
+      if (!body) { showToast('답변 내용을 입력해 주세요.', 'error'); return; }
+
+      try {
+        await db.collection('consultation_contents').doc(postId)
+          .collection('replies').add({
+            body: body,
+            authorEmail: currentUser.email.toLowerCase(),
+            authorName: currentUser.displayName || currentUser.email,
+            authorUid: currentUser.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+        // 답변 수 업데이트
+        await db.collection('consultations').doc(postId).update({
+          replyCount: firebase.firestore.FieldValue.increment(1),
+          status: 'in_progress',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showToast('답변이 등록되었습니다.', 'success');
+        await loadPosts();
+        openDetail(postId);
+      } catch (e) {
+        showToast('답변 등록 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🔄 상태 변경 / 🗑️ 삭제                                           ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function changeStatus(postId, newStatus) {
+      try {
+        await db.collection('consultations').doc(postId).update({
+          status: newStatus,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('상태가 변경되었습니다.', 'success');
+        await loadPosts();
+        openDetail(postId);
+      } catch (e) {
+        showToast('상태 변경 실패: ' + e.message, 'error');
+      }
+    }
+
+    async function deletePost(postId) {
+      if (currentRole !== ROLES.MASTER) return;
+      if (!confirm('이 상담 게시물을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+
+      try {
+        // 답변 삭제
+        const repliesSnap = await db.collection('consultation_contents').doc(postId)
+          .collection('replies').get();
+        const batch = db.batch();
+        repliesSnap.forEach(doc => batch.delete(doc.ref));
+        
+        // 내용 삭제
+        batch.delete(db.collection('consultation_contents').doc(postId));
+        // 메타데이터 삭제
+        batch.delete(db.collection('consultations').doc(postId));
+        
+        await batch.commit();
+        showToast('게시물이 삭제되었습니다.', 'success');
+        closeModal('detailModal');
+        await loadPosts();
+      } catch (e) {
+        showToast('삭제 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🛠️ 유틸리티                                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function getStatusBadge(status) {
+      const map = {
+        'pending': '<span class="status-badge status-pending">⏳ 대기중</span>',
+        'assigned': '<span class="status-badge status-assigned">📋 배정완료</span>',
+        'in_progress': '<span class="status-badge status-progress">🔄 진행중</span>',
+        'completed': '<span class="status-badge status-complete">✅ 상담완료</span>'
+      };
+      return map[status] || map['pending'];
+    }
+
+    function formatDate(timestamp) {
+      if (!timestamp) return '-';
+      const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function maskEmail(email) {
+      if (!email) return '';
+      const [local, domain] = email.split('@');
+      if (local.length <= 3) return local[0] + '***@' + domain;
+      return local.substring(0, 3) + '***@' + domain;
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg ' + type;
+      const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+      toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> ${message}`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all .3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // ESC키로 모달 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(m => {
+          m.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
