@@ -154,6 +154,7 @@
     .status-assigned { background: #E3F2FD; color: #1565C0; }
     .status-progress { background: #F3E5F5; color: #6A1B9A; }
     .status-complete { background: #E8F5E9; color: #2E7D32; }
+    .status-notice { background: #FFF8E1; color: #F57F17; }
 
     .category-badge {
       display: inline-block; padding: 3px 8px; border-radius: 6px;
@@ -441,7 +442,7 @@
         Google 계정으로 로그인
       </button>
       <p class="login-note">
-        🔒 숙명 이메일(@sookmyung.ac.kr / @sm.ac.kr) 또는<br>
+        숙명 이메일(@sookmyung.ac.kr / @sm.ac.kr) 또는<br>
         등록된 변호사 계정으로만 이용 가능합니다.<br>
         모든 상담 내용은 암호화되어 안전하게 보호됩니다.
       </p>
@@ -470,7 +471,7 @@
     <!-- Page Header -->
     <div class="page-header">
       <div class="container">
-        <h1>🔒 법률상담 게시판</h1>
+        <h1>법률상담 게시판</h1>
         <p>상담 내용은 본인과 배정된 변호사만 열람할 수 있습니다</p>
       </div>
     </div>
@@ -524,7 +525,7 @@
         <!-- 수신자 선택 -->
         <div style="margin-bottom:14px;">
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">
-            📬 수신 변호사 선택
+            수신 변호사 선택
             <button type="button" onclick="toggleAllLawyerCheckboxes()" 
               style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid var(--rose-gold-primary);background:#fff;color:var(--rose-gold-primary);border-radius:12px;cursor:pointer;">전체 선택/해제</button>
           </label>
@@ -533,7 +534,7 @@
 
         <!-- 대기 상담 포함 -->
         <div style="margin-bottom:14px;">
-          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">📋 대기 중 상담 건 포함 (선택)</label>
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">대기 중 상담 건 포함 (선택)</label>
           <div id="pendingPostsSelect" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:10px;background:#FAFAFA;">
             <span style="font-size:12px;color:#999;">게시물 로드 후 표시됩니다</span>
           </div>
@@ -541,7 +542,7 @@
 
         <!-- 제목 -->
         <div style="margin-bottom:14px;">
-          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">📌 이메일 제목</label>
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">이메일 제목</label>
           <input type="text" id="clinicEmailSubject" class="form-input" 
             value="[숙명 리걸클리닉] 법률상담 배정 요청" 
             style="font-size:13px;">
@@ -550,7 +551,7 @@
         <!-- 본문 -->
         <div style="margin-bottom:14px;">
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">
-            ✏️ 이메일 본문
+            이메일 본문
             <button type="button" onclick="resetClinicEmailBody()" 
               style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid #ccc;background:#fff;color:#666;border-radius:12px;cursor:pointer;">기본 템플릿</button>
           </label>
@@ -560,10 +561,10 @@
         <!-- 발송 방식 -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn-primary-action" style="font-size:13px;padding:10px 20px;" onclick="sendLawyerEmailViaScript()">
-            📧 자동 발송 (Google Apps Script)
+            자동 발송 (Google Apps Script)
           </button>
           <button class="btn-secondary-action" style="font-size:13px;padding:10px 20px;" onclick="sendLawyerEmailViaMailto()">
-            📮 메일 앱으로 발송
+            메일 앱으로 발송
           </button>
         </div>
         <p style="font-size:11px;color:#999;margin-top:8px;">
@@ -628,11 +629,11 @@
   <div id="writeModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>📝 법률상담 신청</h3>
+        <h3 id="writeModalTitle">📝 법률상담 신청</h3>
         <button class="modal-close" onclick="closeModal('writeModal')">✕</button>
       </div>
       <div class="modal-body">
-        <div class="security-notice" style="margin-top:0;">
+        <div id="writeSecurityNotice" class="security-notice" style="margin-top:0;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
@@ -661,11 +662,11 @@
           <label>상담 내용 <span class="required">*</span></label>
           <textarea id="writeContent" class="form-input" placeholder="법률 문제의 구체적인 사실관계와 궁금하신 점을 상세히 작성해 주세요.&#10;&#10;※ 정확한 상담을 위해 가능한 한 구체적으로 작성해 주시면 도움이 됩니다.&#10;※ 민감한 개인정보(주민등록번호 등)는 기재하지 마세요."></textarea>
         </div>
-        <div class="form-group">
+        <div id="writeContactGroup" class="form-group">
           <label>연락처 (선택)</label>
           <input type="text" id="writeContact" class="form-input" placeholder="연락받을 전화번호 또는 이메일 (선택사항)">
         </div>
-        <div style="background:#F3E5F5;border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div id="writeAgreeGroup" style="background:#F3E5F5;border-radius:10px;padding:14px;margin-bottom:16px;">
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4A148C;line-height:1.5;">
             <input type="checkbox" id="writeAgree" style="margin-top:3px;">
             상담 내용이 배정된 변호사에게 공유되는 것에 동의합니다. 
@@ -674,7 +675,7 @@
         </div>
         <div class="form-actions">
           <button class="btn-secondary-action" onclick="closeModal('writeModal')">취소</button>
-          <button class="btn-primary-action" onclick="submitPost()">상담 신청하기</button>
+          <button id="writeSubmitBtn" class="btn-primary-action" onclick="submitPost()">상담 신청하기</button>
         </div>
       </div>
     </div>
@@ -684,7 +685,7 @@
   <div id="detailModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <h3>📋 상담 상세 내용</h3>
+        <h3>상담 상세 내용</h3>
         <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
       </div>
       <div class="modal-body" id="detailBody">
@@ -926,17 +927,17 @@
       const roleEl = document.getElementById('userRole');
       const roleConfig = {
         [ROLES.MASTER]: { text: '👑 관리자', class: 'role-master' },
-        [ROLES.LAWYER]: { text: '⚖️ 변호사', class: 'role-lawyer' },
-        [ROLES.CLINIC_MANAGER]: { text: '📋 클리닉 관리', class: 'role-clinic' },
-        [ROLES.STUDENT]: { text: '🎓 학생', class: 'role-student' }
+        [ROLES.LAWYER]: { text: '변호사', class: 'role-lawyer' },
+        [ROLES.CLINIC_MANAGER]: { text: '클리닉 관리', class: 'role-clinic' },
+        [ROLES.STUDENT]: { text: '학생', class: 'role-student' }
       };
       const rc = roleConfig[currentRole] || { text: '사용자', class: 'role-student' };
       roleEl.textContent = rc.text;
       roleEl.className = 'role-badge ' + rc.class;
 
       // 역할별 UI 표시
-      // 학생 & 마스터: 글쓰기 가능
-      if (currentRole === ROLES.STUDENT || currentRole === ROLES.MASTER) {
+      // 학생 & 마스터 & 클리닉 매니저: 글쓰기 가능
+      if (currentRole === ROLES.STUDENT || currentRole === ROLES.MASTER || currentRole === ROLES.CLINIC_MANAGER) {
         document.getElementById('btnWrite').classList.remove('hidden');
       }
 
@@ -988,7 +989,7 @@
       }
       container.innerHTML = lawyerEmails.map((email, i) => `
         <div class="lawyer-chip">
-          ⚖️ ${email}
+          ${email}
           <button class="remove-btn" onclick="removeLawyer(${i})" title="삭제">✕</button>
         </div>
       `).join('');
@@ -1097,7 +1098,7 @@
             <span style="font-weight:600;">${escapeHTML(p.title)}</span>
             <span style="font-size:11px;color:#999;margin-left:4px;">[${p.category || '기타'}]</span>
             <span style="font-size:11px;color:${p.status === 'pending' ? 'var(--status-pending)' : 'var(--status-assigned)'};">
-              ${p.status === 'pending' ? '⏳대기' : '📋배정'}
+              ${p.status === 'pending' ? '대기' : '배정'}
             </span>
           </span>
         </label>
@@ -1116,7 +1117,7 @@
       return '안녕하세요, 숙명 리걸클리닉입니다.\n\n' +
         '새로운 법률상담 신청이 접수되었습니다.\n' +
         '아래 게시판에서 상담 목록을 확인하시고, 상담 가능한 건에 배정을 부탁드립니다.\n\n' +
-        '📋 게시판: ' + BOARD_URL + '\n\n' +
+        '게시판: ' + BOARD_URL + '\n\n' +
         '감사합니다.\n숙명 리걸클리닉 드림';
     }
 
@@ -1129,7 +1130,7 @@
       let body = document.getElementById('clinicEmailBody').value.trim();
       const checkedPosts = document.querySelectorAll('.pending-post-checkbox:checked');
       if (checkedPosts.length > 0) {
-        body += '\n\n──────────────────────\n📋 배정 요청 상담 목록:\n──────────────────────\n';
+        body += '\n\n──────────────────────\n배정 요청 상담 목록:\n──────────────────────\n';
         checkedPosts.forEach((cb, i) => {
           body += `\n${i + 1}. [${cb.dataset.category || '기타'}] ${cb.dataset.title}\n` +
             `   요청자: ${cb.dataset.author} | 상태: ${cb.dataset.status === 'pending' ? '대기' : '배정 완료'}\n`;
@@ -1270,13 +1271,13 @@
         const date = post.createdAt ? formatDate(post.createdAt) : '-';
         const statusHTML = getStatusBadge(post.status);
         const lawyerHTML = post.assignedLawyerName 
-          ? `<span class="lawyer-name">⚖️ ${post.assignedLawyerName}</span>` 
+          ? `<span class="lawyer-name">${post.assignedLawyerName}</span>` 
           : '<span style="color:var(--light-text);font-size:12px;">미배정</span>';
         const categoryHTML = post.category 
           ? `<span class="category-badge">${post.category}</span>` : '-';
 
-        // 클리닉 매니저는 제목만 보이고 클릭 불가
-        const titleClick = currentRole === ROLES.CLINIC_MANAGER 
+        // 클리닉 매니저는 공지사항만 클릭 가능
+        const titleClick = (currentRole === ROLES.CLINIC_MANAGER && !post.isNotice)
           ? '' 
           : `onclick="openDetail('${post.id}')" style="cursor:pointer;"`;
 
@@ -1332,12 +1333,38 @@
     // ║  ✏️ 글쓰기                                                      ║
     // ╚══════════════════════════════════════════════════════════════╝
     function openWriteModal() {
-      if (currentRole !== ROLES.STUDENT && currentRole !== ROLES.MASTER) return;
+      if (currentRole !== ROLES.STUDENT && currentRole !== ROLES.MASTER && currentRole !== ROLES.CLINIC_MANAGER) return;
       document.getElementById('writeCategory').value = '';
       document.getElementById('writeTitle').value = '';
       document.getElementById('writeContent').value = '';
       document.getElementById('writeContact').value = '';
       document.getElementById('writeAgree').checked = false;
+
+      // 클리닉 매니저: 공지사항 모드
+      const isNoticeMode = currentRole === ROLES.CLINIC_MANAGER;
+      document.getElementById('writeModalTitle').textContent = isNoticeMode ? '📢 공지사항 등록' : '📝 법률상담 신청';
+      document.getElementById('writeSecurityNotice').style.display = isNoticeMode ? 'none' : 'flex';
+      document.getElementById('writeContactGroup').style.display = isNoticeMode ? 'none' : 'block';
+      document.getElementById('writeAgreeGroup').style.display = isNoticeMode ? 'none' : 'block';
+      document.getElementById('writeSubmitBtn').textContent = isNoticeMode ? '공지 등록하기' : '상담 신청하기';
+      document.getElementById('writeContent').placeholder = isNoticeMode 
+        ? '공지사항 내용을 작성해 주세요.' 
+        : '법률 문제의 구체적인 사실관계와 궁금하신 점을 상세히 작성해 주세요.\n\n※ 정확한 상담을 위해 가능한 한 구체적으로 작성해 주시면 도움이 됩니다.\n※ 민감한 개인정보(주민등록번호 등)는 기재하지 마세요.';
+
+      // 공지사항 카테고리 옵션 추가/제거
+      const categorySelect = document.getElementById('writeCategory');
+      const noticeOpt = categorySelect.querySelector('option[value="공지사항"]');
+      if (isNoticeMode) {
+        if (!noticeOpt) {
+          const opt = document.createElement('option');
+          opt.value = '공지사항';
+          opt.textContent = '📢 공지사항';
+          categorySelect.insertBefore(opt, categorySelect.options[1]);
+        }
+      } else {
+        if (noticeOpt) noticeOpt.remove();
+      }
+
       openModal('writeModal');
     }
 
@@ -1347,11 +1374,12 @@
       const content = document.getElementById('writeContent').value.trim();
       const contact = document.getElementById('writeContact').value.trim();
       const agreed = document.getElementById('writeAgree').checked;
+      const isNoticeMode = currentRole === ROLES.CLINIC_MANAGER;
 
-      if (!category) { showToast('상담 분류를 선택해 주세요.', 'error'); return; }
+      if (!category) { showToast('분류를 선택해 주세요.', 'error'); return; }
       if (!title) { showToast('제목을 입력해 주세요.', 'error'); return; }
-      if (!content) { showToast('상담 내용을 입력해 주세요.', 'error'); return; }
-      if (!agreed) { showToast('동의사항에 체크해 주세요.', 'error'); return; }
+      if (!content) { showToast('내용을 입력해 주세요.', 'error'); return; }
+      if (!isNoticeMode && !agreed) { showToast('동의사항에 체크해 주세요.', 'error'); return; }
 
       try {
         // 1) 메타데이터 저장 (consultations 컬렉션)
@@ -1359,18 +1387,19 @@
           title: title,
           category: category,
           authorEmail: currentUser.email.toLowerCase(),
-          authorName: currentUser.displayName || '익명',
+          authorName: isNoticeMode ? '리걸클리닉 관리자' : (currentUser.displayName || '익명'),
           authorUid: currentUser.uid,
-          status: 'pending',
+          status: isNoticeMode ? 'notice' : 'pending',
           assignedLawyer: null,
           assignedLawyerName: null,
-          contact: contact || null,
+          contact: isNoticeMode ? null : (contact || null),
           replyCount: 0,
+          isNotice: isNoticeMode,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // 2) 상담 내용 저장 (별도 컬렉션 — 보안 분리)
+        // 2) 내용 저장 (별도 컬렉션 — 보안 분리)
         await db.collection('consultation_contents').doc(postRef.id).set({
           body: content,
           authorEmail: currentUser.email.toLowerCase(),
@@ -1380,16 +1409,18 @@
         });
 
         closeModal('writeModal');
-        showToast('상담이 성공적으로 신청되었습니다.', 'success');
+        showToast(isNoticeMode ? '공지사항이 등록되었습니다.' : '상담이 성공적으로 신청되었습니다.', 'success');
 
-        // 📧 새 상담 등록 → 클리닉 매니저에게 알림
-        sendNotification({
-          type: 'new_consultation',
-          studentName: currentUser.displayName || currentUser.email,
-          postTitle: title,
-          category: category,
-          boardUrl: BOARD_URL
-        });
+        // 📧 새 상담 등록 → 클리닉 매니저에게 알림 (공지사항은 제외)
+        if (!isNoticeMode) {
+          sendNotification({
+            type: 'new_consultation',
+            studentName: currentUser.displayName || currentUser.email,
+            postTitle: title,
+            category: category,
+            boardUrl: BOARD_URL
+          });
+        }
 
         await loadPosts();
       } catch (e) {
@@ -1402,10 +1433,13 @@
     // ║  📖 상세 보기                                                     ║
     // ╚══════════════════════════════════════════════════════════════╝
     async function openDetail(postId) {
-      if (currentRole === ROLES.CLINIC_MANAGER || currentRole === ROLES.BLOCKED) return;
+      if (currentRole === ROLES.BLOCKED) return;
 
       const post = allPosts.find(p => p.id === postId);
       if (!post) return;
+
+      // 클리닉 매니저는 공지사항만 열람 가능
+      if (currentRole === ROLES.CLINIC_MANAGER && !post.isNotice) return;
 
       const detailBody = document.getElementById('detailBody');
       detailBody.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div><p style="margin-top:12px;font-size:14px;color:var(--light-text);">불러오는 중...</p></div>';
@@ -1431,10 +1465,10 @@
               contentBody = contentDoc.data().body || '';
             }
           } catch (e) {
-            contentBody = '⚠️ 내용을 불러올 수 없습니다 (권한 부족).';
+            contentBody = '내용을 불러올 수 없습니다 (권한 부족).';
           }
         } else {
-          contentBody = '🔒 열람 권한이 없습니다.';
+          contentBody = '열람 권한이 없습니다.';
         }
 
         // 답변 로드
@@ -1450,14 +1484,13 @@
             });
             repliesHTML = replyItems.map(r => {
               const isStudentReply = r.replyType === 'student_followup';
-              const icon = isStudentReply ? '🎓' : '⚖️';
               const label = isStudentReply ? '추가 문의' : '변호사 답변';
               const bgColor = isStudentReply ? '#F3E5F5' : '#FFF9F5';
               const borderColor = isStudentReply ? '#CE93D8' : '#E8D5C4';
               return `
               <div class="reply-item" style="background:${bgColor};border-left:3px solid ${borderColor};">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="reply-author">${icon} ${escapeHTML(r.authorName || label)} <span style="font-size:11px;color:#999;font-weight:400;">(${label})</span></span>
+                  <span class="reply-author">${escapeHTML(r.authorName || label)} <span style="font-size:11px;color:#999;font-weight:400;">(${label})</span></span>
                   <span class="reply-date">${r.createdAt ? formatDate(r.createdAt) : ''}</span>
                 </div>
                 <div class="reply-body">${escapeHTML(r.body || '')}</div>
@@ -1473,7 +1506,7 @@
         if (currentRole === ROLES.LAWYER && !post.assignedLawyer) {
           assignHTML = `
             <button class="btn-assign" onclick="assignSelf('${postId}')">
-              ✋ 이 상담을 맡겠습니다 (나를 배정)
+              이 상담을 맡겠습니다
             </button>
           `;
         } else if (currentRole === ROLES.MASTER && !post.assignedLawyer) {
@@ -1493,10 +1526,10 @@
         if (currentRole === ROLES.MASTER || (currentRole === ROLES.LAWYER && post.assignedLawyer === currentUser.email.toLowerCase())) {
           statusChangeHTML = `
             <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
-              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','pending')">⏳ 대기</button>
-              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','assigned')">📋 배정</button>
-              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','in_progress')">🔄 진행중</button>
-              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','completed')">✅ 완료</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','pending')">대기</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','assigned')">배정</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','in_progress')">진행중</button>
+              <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','completed')">완료</button>
             </div>
           `;
         }
@@ -1525,7 +1558,7 @@
         if (currentRole === ROLES.MASTER) {
           deleteHTML = `
             <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
-              onclick="deletePost('${postId}')">🗑️ 게시물 삭제</button>
+              onclick="deletePost('${postId}')">게시물 삭제</button>
           `;
         }
 
@@ -1534,10 +1567,10 @@
             <div style="margin-bottom:8px;">${post.category ? `<span class="category-badge">${post.category}</span>` : ''} ${getStatusBadge(post.status)}</div>
             <h2 class="post-detail-title">${escapeHTML(post.title)}</h2>
             <div class="post-meta-row">
-              <div class="post-meta-item">👤 ${escapeHTML(post.authorName || '익명')}</div>
-              <div class="post-meta-item">📧 ${maskEmail(post.authorEmail)}</div>
-              <div class="post-meta-item">📅 ${post.createdAt ? formatDate(post.createdAt) : '-'}</div>
-              ${post.assignedLawyerName ? `<div class="post-meta-item"><span class="lawyer-name">⚖️ ${escapeHTML(post.assignedLawyerName)}</span></div>` : ''}
+              <div class="post-meta-item">${escapeHTML(post.authorName || '익명')}</div>
+              <div class="post-meta-item">${maskEmail(post.authorEmail)}</div>
+              <div class="post-meta-item">${post.createdAt ? formatDate(post.createdAt) : '-'}</div>
+              ${post.assignedLawyerName ? `<div class="post-meta-item"><span class="lawyer-name">${escapeHTML(post.assignedLawyerName)}</span></div>` : ''}
             </div>
           </div>
 
@@ -1548,7 +1581,7 @@
 
           ${repliesHTML || replyFormHTML ? `
             <div class="reply-section">
-              <h4>💬 상담 대화 ${repliesHTML ? '' : '(아직 답변이 없습니다)'}</h4>
+              <h4>상담 대화 ${repliesHTML ? '' : '(아직 답변이 없습니다)'}</h4>
               ${repliesHTML}
               ${replyFormHTML}
             </div>
@@ -1753,10 +1786,11 @@
 
     function getStatusBadge(status) {
       const map = {
-        'pending': '<span class="status-badge status-pending">⏳ 대기중</span>',
-        'assigned': '<span class="status-badge status-assigned">📋 배정완료</span>',
-        'in_progress': '<span class="status-badge status-progress">🔄 진행중</span>',
-        'completed': '<span class="status-badge status-complete">✅ 상담완료</span>'
+        'notice': '<span class="status-badge status-notice">📢 공지</span>',
+        'pending': '<span class="status-badge status-pending">대기중</span>',
+        'assigned': '<span class="status-badge status-assigned">배정완료</span>',
+        'in_progress': '<span class="status-badge status-progress">진행중</span>',
+        'completed': '<span class="status-badge status-complete">상담완료</span>'
       };
       return map[status] || map['pending'];
     }
@@ -1785,8 +1819,7 @@
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = 'toast-msg ' + type;
-      const icons = { success: '✅', error: '❌', info: 'ℹ️' };
-      toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> ${message}`;
+      toast.innerHTML = message;
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
