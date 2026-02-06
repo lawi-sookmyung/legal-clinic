@@ -517,14 +517,58 @@
           </svg>
           클리닉 관리 — 변호사 이메일 발송
         </h3>
-        <p style="font-size:13px;color:var(--light-text);margin-bottom:12px;">
-          대기 중인 상담 건에 대해 변호사에게 배정 요청 이메일을 보낼 수 있습니다.
-          (상담 내용은 열람할 수 없습니다)
+        <p style="font-size:13px;color:var(--light-text);margin-bottom:16px;">
+          등록된 변호사에게 배정 요청 이메일을 보낼 수 있습니다. (상담 내용은 열람할 수 없습니다)
         </p>
-        <div id="emailLawyerSelect"></div>
-        <button class="btn-primary-action" style="margin-top:12px;font-size:13px;padding:10px 20px;" onclick="sendLawyerEmail()">
-          📧 변호사에게 이메일 발송
-        </button>
+
+        <!-- 수신자 선택 -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">
+            📬 수신 변호사 선택
+            <button type="button" onclick="toggleAllLawyerCheckboxes()" 
+              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid var(--rose-gold-primary);background:#fff;color:var(--rose-gold-primary);border-radius:12px;cursor:pointer;">전체 선택/해제</button>
+          </label>
+          <div id="emailLawyerSelect" style="max-height:140px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:10px;background:#FAFAFA;"></div>
+        </div>
+
+        <!-- 대기 상담 포함 -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">📋 대기 중 상담 건 포함 (선택)</label>
+          <div id="pendingPostsSelect" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:10px;background:#FAFAFA;">
+            <span style="font-size:12px;color:#999;">게시물 로드 후 표시됩니다</span>
+          </div>
+        </div>
+
+        <!-- 제목 -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">📌 이메일 제목</label>
+          <input type="text" id="clinicEmailSubject" class="form-input" 
+            value="[숙명 리걸클리닉] 법률상담 배정 요청" 
+            style="font-size:13px;">
+        </div>
+
+        <!-- 본문 -->
+        <div style="margin-bottom:14px;">
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">
+            ✏️ 이메일 본문
+            <button type="button" onclick="resetClinicEmailBody()" 
+              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid #ccc;background:#fff;color:#666;border-radius:12px;cursor:pointer;">기본 템플릿</button>
+          </label>
+          <textarea id="clinicEmailBody" class="form-input" style="min-height:140px;font-size:13px;line-height:1.6;"></textarea>
+        </div>
+
+        <!-- 발송 방식 -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-primary-action" style="font-size:13px;padding:10px 20px;" onclick="sendLawyerEmailViaScript()">
+            📧 자동 발송 (Google Apps Script)
+          </button>
+          <button class="btn-secondary-action" style="font-size:13px;padding:10px 20px;" onclick="sendLawyerEmailViaMailto()">
+            📮 메일 앱으로 발송
+          </button>
+        </div>
+        <p style="font-size:11px;color:#999;margin-top:8px;">
+          * 자동 발송: Apps Script가 직접 이메일 전송 | 메일 앱: 기본 이메일 프로그램 실행
+        </p>
       </div>
 
       <!-- Board Actions -->
@@ -701,6 +745,26 @@
     const BLOCKED_EMAILS = [
       'twinky0509@gmail.com'
     ];
+
+    // 📧 이메일 알림 Google Apps Script URL
+    // ⚠️ 배포 후 아래 URL을 실제 URL로 교체하세요
+    const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbFwYfu4PkcFwLvYGy6uRYC09whrEy9fO958P9nRf9GOjkjtZ8hGyLvAQvZjgFTDQnKQ/exec';
+    const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
+
+    // 알림 전송 (비동기, 실패해도 게시판 동작에 영향 없음)
+    async function sendNotification(data) {
+      if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
+      try {
+        await fetch(NOTIFICATION_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+      } catch (e) {
+        console.warn('알림 전송 실패 (무시):', e);
+      }
+    }
 
     // 숙명 도메인 확인
     function isSookmyungEmail(email) {
@@ -885,6 +949,7 @@
       if (currentRole === ROLES.CLINIC_MANAGER) {
         document.getElementById('adminPanel').classList.remove('hidden');
         document.getElementById('clinicPanel').classList.remove('hidden');
+        resetClinicEmailBody();
       }
     }
 
@@ -1012,21 +1077,117 @@
     // ╔══════════════════════════════════════════════════════════════╗
     // ║  📧 클리닉 매니저 이메일 발송                                        ║
     // ╚══════════════════════════════════════════════════════════════╝
-    function sendLawyerEmail() {
+    
+    // 대기 중 상담 목록 렌더링
+    function renderPendingPosts() {
+      const container = document.getElementById('pendingPostsSelect');
+      if (!container) return;
+      const pendingPosts = allPosts.filter(p => p.status === 'pending' || p.status === 'assigned');
+      if (pendingPosts.length === 0) {
+        container.innerHTML = '<span style="font-size:12px;color:#999;">대기 중인 상담이 없습니다.</span>';
+        return;
+      }
+      container.innerHTML = pendingPosts.map(p => `
+        <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" class="pending-post-checkbox" value="${p.id}" 
+            data-title="${escapeHTML(p.title)}" data-category="${escapeHTML(p.category || '')}" 
+            data-author="${escapeHTML(p.authorName || '익명')}" data-status="${p.status}"
+            style="margin-top:2px;">
+          <span>
+            <span style="font-weight:600;">${escapeHTML(p.title)}</span>
+            <span style="font-size:11px;color:#999;margin-left:4px;">[${p.category || '기타'}]</span>
+            <span style="font-size:11px;color:${p.status === 'pending' ? 'var(--status-pending)' : 'var(--status-assigned)'};">
+              ${p.status === 'pending' ? '⏳대기' : '📋배정'}
+            </span>
+          </span>
+        </label>
+      `).join('');
+    }
+
+    // 전체 선택/해제 토글
+    function toggleAllLawyerCheckboxes() {
+      const checkboxes = document.querySelectorAll('.lawyer-email-checkbox');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => cb.checked = !allChecked);
+    }
+
+    // 기본 이메일 템플릿
+    function getDefaultEmailBody() {
+      return '안녕하세요, 숙명 리걸클리닉입니다.\n\n' +
+        '새로운 법률상담 신청이 접수되었습니다.\n' +
+        '아래 게시판에서 상담 목록을 확인하시고, 상담 가능한 건에 배정을 부탁드립니다.\n\n' +
+        '📋 게시판: ' + BOARD_URL + '\n\n' +
+        '감사합니다.\n숙명 리걸클리닉 드림';
+    }
+
+    function resetClinicEmailBody() {
+      document.getElementById('clinicEmailBody').value = getDefaultEmailBody();
+    }
+
+    // 이메일 본문에 선택된 대기 상담 정보 추가
+    function buildEmailBody() {
+      let body = document.getElementById('clinicEmailBody').value.trim();
+      const checkedPosts = document.querySelectorAll('.pending-post-checkbox:checked');
+      if (checkedPosts.length > 0) {
+        body += '\n\n──────────────────────\n📋 배정 요청 상담 목록:\n──────────────────────\n';
+        checkedPosts.forEach((cb, i) => {
+          body += `\n${i + 1}. [${cb.dataset.category || '기타'}] ${cb.dataset.title}\n` +
+            `   요청자: ${cb.dataset.author} | 상태: ${cb.dataset.status === 'pending' ? '대기' : '배정 완료'}\n`;
+        });
+        body += '\n──────────────────────\n';
+      }
+      return body;
+    }
+
+    // 선택된 변호사 이메일 가져오기
+    function getSelectedLawyerEmails() {
       const checked = document.querySelectorAll('.lawyer-email-checkbox:checked');
       if (checked.length === 0) {
         showToast('이메일을 보낼 변호사를 선택해 주세요.', 'error');
+        return null;
+      }
+      return Array.from(checked).map(cb => cb.value);
+    }
+
+    // 방법 1: Google Apps Script 자동 발송
+    async function sendLawyerEmailViaScript() {
+      const emails = getSelectedLawyerEmails();
+      if (!emails) return;
+
+      if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) {
+        showToast('Google Apps Script URL이 설정되지 않았습니다. 메일 앱 발송을 이용해 주세요.', 'error');
         return;
       }
-      const emails = Array.from(checked).map(cb => cb.value);
-      const subject = encodeURIComponent('[숙명 리걸클리닉] 법률상담 배정 요청');
-      const body = encodeURIComponent(
-        '안녕하세요, 숙명 리걸클리닉입니다.\n\n' +
-        '새로운 법률상담 신청이 접수되었습니다.\n' +
-        '아래 링크에서 상담 게시판을 확인하시고, 상담 가능한 건에 배정을 부탁드립니다.\n\n' +
-        '게시판 주소: ' + window.location.href + '\n\n' +
-        '감사합니다.\n숙명 리걸클리닉 드림'
-      );
+
+      const subject = document.getElementById('clinicEmailSubject').value.trim();
+      const body = buildEmailBody();
+
+      try {
+        await fetch(NOTIFICATION_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'clinic_email',
+            toEmails: emails,
+            subject: subject,
+            body: body,
+            senderName: currentUser.displayName || '클리닉 매니저'
+          })
+        });
+        showToast(`${emails.length}명의 변호사에게 이메일이 발송되었습니다.`, 'success');
+      } catch (e) {
+        showToast('발송 실패: ' + e.message, 'error');
+      }
+    }
+
+    // 방법 2: mailto (기본 메일 앱)
+    function sendLawyerEmailViaMailto() {
+      const emails = getSelectedLawyerEmails();
+      if (!emails) return;
+
+      const subject = encodeURIComponent(document.getElementById('clinicEmailSubject').value.trim());
+      const body = encodeURIComponent(buildEmailBody());
       const mailto = `mailto:${emails.join(',')}?subject=${subject}&body=${body}`;
       window.open(mailto);
       showToast('이메일 클라이언트가 열립니다.', 'info');
@@ -1066,6 +1227,7 @@
 
         renderBoard();
         updateStats();
+        renderPendingPosts();
       } catch (e) {
         console.error('loadPosts error:', e);
         // 인덱스 필요 시 콘솔에 URL 표시됨
@@ -1219,6 +1381,16 @@
 
         closeModal('writeModal');
         showToast('상담이 성공적으로 신청되었습니다.', 'success');
+
+        // 📧 새 상담 등록 → 클리닉 매니저에게 알림
+        sendNotification({
+          type: 'new_consultation',
+          studentName: currentUser.displayName || currentUser.email,
+          postTitle: title,
+          category: category,
+          boardUrl: BOARD_URL
+        });
+
         await loadPosts();
       } catch (e) {
         console.error('Submit error:', e);
@@ -1276,15 +1448,21 @@
             repliesSnap.forEach(doc => {
               replyItems.push(doc.data());
             });
-            repliesHTML = replyItems.map(r => `
-              <div class="reply-item">
+            repliesHTML = replyItems.map(r => {
+              const isStudentReply = r.replyType === 'student_followup';
+              const icon = isStudentReply ? '🎓' : '⚖️';
+              const label = isStudentReply ? '추가 문의' : '변호사 답변';
+              const bgColor = isStudentReply ? '#F3E5F5' : '#FFF9F5';
+              const borderColor = isStudentReply ? '#CE93D8' : '#E8D5C4';
+              return `
+              <div class="reply-item" style="background:${bgColor};border-left:3px solid ${borderColor};">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                  <span class="reply-author">⚖️ ${escapeHTML(r.authorName || '변호사')}</span>
+                  <span class="reply-author">${icon} ${escapeHTML(r.authorName || label)} <span style="font-size:11px;color:#999;font-weight:400;">(${label})</span></span>
                   <span class="reply-date">${r.createdAt ? formatDate(r.createdAt) : ''}</span>
                 </div>
                 <div class="reply-body">${escapeHTML(r.body || '')}</div>
               </div>
-            `).join('');
+            `;}).join('');
           }
         } catch (e) {
           console.warn('Replies load error:', e);
@@ -1323,13 +1501,21 @@
           `;
         }
 
-        // 답변 작성 (변호사/마스터)
+        // 답변 작성 (변호사/마스터/작성자 학생)
         let replyFormHTML = '';
+        const isAuthorStudent = currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase();
         if (currentRole === ROLES.LAWYER || currentRole === ROLES.MASTER) {
           replyFormHTML = `
             <div style="margin-top:16px;">
               <textarea id="replyInput" class="form-input" placeholder="변호사 답변을 작성해 주세요..." style="min-height:100px;"></textarea>
               <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;" onclick="submitReply('${postId}')">답변 등록</button>
+            </div>
+          `;
+        } else if (isAuthorStudent) {
+          replyFormHTML = `
+            <div style="margin-top:16px;">
+              <textarea id="replyInput" class="form-input" placeholder="추가 문의사항을 작성해 주세요..." style="min-height:100px;"></textarea>
+              <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;background:linear-gradient(135deg,#AB47BC,#7B1FA2);" onclick="submitReply('${postId}')">추가 문의 등록</button>
             </div>
           `;
         }
@@ -1362,7 +1548,7 @@
 
           ${repliesHTML || replyFormHTML ? `
             <div class="reply-section">
-              <h4>💬 변호사 답변 ${repliesHTML ? '' : '(아직 답변이 없습니다)'}</h4>
+              <h4>💬 상담 대화 ${repliesHTML ? '' : '(아직 답변이 없습니다)'}</h4>
               ${repliesHTML}
               ${replyFormHTML}
             </div>
@@ -1445,7 +1631,19 @@
     async function submitReply(postId) {
       const input = document.getElementById('replyInput');
       const body = input.value.trim();
-      if (!body) { showToast('답변 내용을 입력해 주세요.', 'error'); return; }
+      if (!body) { showToast('내용을 입력해 주세요.', 'error'); return; }
+
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      const isStudentFollowup = currentRole === ROLES.STUDENT 
+        && post.authorEmail === currentUser.email.toLowerCase();
+      const isLawyerReply = currentRole === ROLES.LAWYER || currentRole === ROLES.MASTER;
+
+      if (!isStudentFollowup && !isLawyerReply) {
+        showToast('답글 권한이 없습니다.', 'error');
+        return;
+      }
 
       try {
         await db.collection('consultation_contents').doc(postId)
@@ -1454,21 +1652,45 @@
             authorEmail: currentUser.email.toLowerCase(),
             authorName: currentUser.displayName || currentUser.email,
             authorUid: currentUser.uid,
+            replyType: isStudentFollowup ? 'student_followup' : 'lawyer_reply',
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
 
         // 답변 수 업데이트
         await db.collection('consultations').doc(postId).update({
           replyCount: firebase.firestore.FieldValue.increment(1),
-          status: 'in_progress',
+          status: isLawyerReply ? 'in_progress' : post.status,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showToast('답변이 등록되었습니다.', 'success');
+        // 📧 이메일 알림 전송
+        if (isLawyerReply) {
+          // 변호사 답변 → 학생에게 알림
+          sendNotification({
+            type: 'lawyer_reply',
+            studentEmail: post.authorEmail,
+            studentName: post.authorName,
+            postTitle: post.title,
+            lawyerName: currentUser.displayName || currentUser.email,
+            boardUrl: BOARD_URL
+          });
+        } else if (isStudentFollowup && post.assignedLawyer) {
+          // 학생 추가 문의 → 배정된 변호사에게 알림
+          sendNotification({
+            type: 'student_followup',
+            lawyerEmail: post.assignedLawyer,
+            lawyerName: post.assignedLawyerName || post.assignedLawyer,
+            studentName: currentUser.displayName || currentUser.email,
+            postTitle: post.title,
+            boardUrl: BOARD_URL
+          });
+        }
+
+        showToast(isStudentFollowup ? '추가 문의가 등록되었습니다.' : '답변이 등록되었습니다.', 'success');
         await loadPosts();
         openDetail(postId);
       } catch (e) {
-        showToast('답변 등록 실패: ' + e.message, 'error');
+        showToast('등록 실패: ' + e.message, 'error');
       }
     }
 
