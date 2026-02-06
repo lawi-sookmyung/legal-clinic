@@ -485,7 +485,7 @@
           <p><strong>보안 안내:</strong> 이 게시판은 숙명 리걸클리닉 법률상담 전용입니다.
             모든 상담 내용은 <strong>작성자 본인</strong>과 <strong>배정된 상담 변호사</strong>만 열람할 수 있으며,
             Firestore 보안 규칙에 의해 데이터베이스 레벨에서 접근이 제어됩니다.
-            관리자는 게시판 관리 권한만 가지며, 상담 내용에 접근할 수 없습니다.</p>
+            게시판 관리 담당자는 상담 내용에 접근할 수 없습니다.</p>
         </div>
       </div>
 
@@ -592,7 +592,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          <p>작성하신 상담 내용은 <strong>본인</strong>과 <strong>배정된 변호사</strong>, <strong>관리자(마스터)</strong>만 열람할 수 있습니다. 
+          <p>작성하신 상담 내용은 <strong>본인</strong>과 <strong>배정된 상담 변호사</strong>만 열람할 수 있습니다. 
             안심하고 상세히 작성해 주세요.</p>
         </div>
         <div class="form-group">
@@ -774,21 +774,20 @@
         return;
       }
 
-      // 2) 마스터 확인
+      // 2) 마스터 확인 (하드코딩 — roles/config 없어도 동작)
       if (MASTER_EMAILS.includes(email)) {
         currentRole = ROLES.MASTER;
-        // Firestore에 마스터 역할 보장
         await ensureRolesDoc();
         return;
       }
 
-      // 3) 클리닉 매니저 확인
+      // 3) 클리닉 매니저 확인 (하드코딩 — roles/config 없어도 동작)
       if (CLINIC_MANAGER_EMAILS.includes(email)) {
         currentRole = ROLES.CLINIC_MANAGER;
         return;
       }
 
-      // 4) 등록된 변호사 확인 (Firestore)
+      // 4) 등록된 변호사 확인 (Firestore — roles/config 없으면 건너뜀)
       try {
         const rolesDoc = await db.collection('roles').doc('config').get();
         if (rolesDoc.exists) {
@@ -800,7 +799,8 @@
           }
         }
       } catch (e) {
-        console.warn('Roles check failed:', e);
+        // roles/config가 없거나 읽기 실패 → 무시하고 계속
+        console.warn('roles/config 확인 실패 (정상일 수 있음):', e.code || e.message);
       }
 
       // 5) 숙명 이메일이면 학생
@@ -901,11 +901,16 @@
         const doc = await db.collection('roles').doc('config').get();
         if (doc.exists) {
           lawyerEmails = doc.data().lawyers || [];
+        } else {
+          lawyerEmails = [];
         }
         renderLawyerList();
         renderLawyerSelect();
       } catch (e) {
-        console.warn('loadLawyers:', e);
+        console.warn('loadLawyers: roles/config 없음 (마스터 첫 로그인 필요):', e.code || e.message);
+        lawyerEmails = [];
+        renderLawyerList();
+        renderLawyerSelect();
       }
     }
 
@@ -953,10 +958,28 @@
       }
 
       try {
-        await db.collection('roles').doc('config').update({
-          lawyers: firebase.firestore.FieldValue.arrayUnion(email),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        const ref = db.collection('roles').doc('config');
+        const doc = await ref.get();
+        if (!doc.exists) {
+          // roles/config가 없으면 생성 (마스터만 가능)
+          if (currentRole === ROLES.MASTER) {
+            await ref.set({
+              masters: MASTER_EMAILS,
+              lawyers: [email],
+              clinic_managers: ['lclin@sookmyung.ac.kr', 'lawi@sookmyung.ac.kr'],
+              blocked: BLOCKED_EMAILS,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          } else {
+            showToast('마스터 관리자가 먼저 로그인해야 합니다.', 'error');
+            return;
+          }
+        } else {
+          await ref.update({
+            lawyers: firebase.firestore.FieldValue.arrayUnion(email),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
         lawyerEmails.push(email);
         renderLawyerList();
         renderLawyerSelect();
@@ -1045,7 +1068,14 @@
         updateStats();
       } catch (e) {
         console.error('loadPosts error:', e);
-        showToast('게시물 로드 실패. 인덱스 생성이 필요할 수 있습니다.', 'error');
+        // 인덱스 필요 시 콘솔에 URL 표시됨
+        if (e.code === 'failed-precondition') {
+          showToast('인덱스 생성이 필요합니다. F12 → Console에서 링크를 클릭하세요.', 'error');
+        } else if (e.code === 'permission-denied') {
+          showToast('접근 권한이 없습니다. Firestore Rules를 확인해 주세요.', 'error');
+        } else {
+          showToast('게시물 로드 실패: ' + (e.message || e.code), 'error');
+        }
       }
     }
 
