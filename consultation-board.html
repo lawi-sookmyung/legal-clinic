@@ -1657,11 +1657,14 @@
           });
 
         // 답변 수 업데이트
-        await db.collection('consultations').doc(postId).update({
+        const updateData = {
           replyCount: firebase.firestore.FieldValue.increment(1),
-          status: isLawyerReply ? 'in_progress' : post.status,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
+        if (isLawyerReply) {
+          updateData.status = 'in_progress';
+        }
+        await db.collection('consultations').doc(postId).update(updateData);
 
         // 📧 이메일 알림 전송
         if (isLawyerReply) {
