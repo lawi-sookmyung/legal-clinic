@@ -961,8 +961,8 @@
         const ref = db.collection('roles').doc('config');
         const doc = await ref.get();
         if (!doc.exists) {
-          // roles/config가 없으면 생성 (마스터만 가능)
-          if (currentRole === ROLES.MASTER) {
+          // roles/config가 없으면 생성 (마스터 또는 클리닉 매니저)
+          if (currentRole === ROLES.MASTER || currentRole === ROLES.CLINIC_MANAGER) {
             await ref.set({
               masters: MASTER_EMAILS,
               lawyers: [email],
@@ -971,7 +971,7 @@
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
           } else {
-            showToast('마스터 관리자가 먼저 로그인해야 합니다.', 'error');
+            showToast('관리자 또는 클리닉 매니저가 먼저 로그인해야 합니다.', 'error');
             return;
           }
         } else {
