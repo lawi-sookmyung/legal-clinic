@@ -789,36 +789,40 @@
     const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeYy5syExEwFOhxaoMR7l0YjPdWiEz7qn6XlwExchgLikwQg8rTsANafcGcx2iGRasxA/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
-    // 알림 전송 — form-urlencoded (Apps Script에서 가장 안정적)
+    // 알림 전송 — hidden form + iframe (상담 폼과 동일한 방식, 가장 안정적)
     function sendNotification(data) {
       if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
       
-      var jsonStr = JSON.stringify(data);
       console.log('[알림] 전송 시도:', data.type, data);
 
-      // form-urlencoded로 전송 (CORS preflight 없음 + Apps Script 완벽 호환)
-      var formBody = 'payload=' + encodeURIComponent(jsonStr);
-
-      // 방법 1: sendBeacon (페이지 이탈에도 안정적)
-      if (navigator.sendBeacon) {
-        var blob = new Blob([formBody], { type: 'application/x-www-form-urlencoded' });
-        var sent = navigator.sendBeacon(NOTIFICATION_SCRIPT_URL, blob);
-        console.log('[알림] sendBeacon 결과:', sent);
-        if (sent) return;
+      // 숨겨진 iframe (최초 1회 생성)
+      var iframe = document.getElementById('_notifyFrame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = '_notifyFrame';
+        iframe.name = '_notifyFrame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
       }
 
-      // 방법 2: fallback — fetch
-      try {
-        fetch(NOTIFICATION_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formBody
-        });
-        console.log('[알림] fetch 전송 완료');
-      } catch (e) {
-        console.warn('[알림] 전송 실패:', e);
-      }
+      // 숨겨진 form 생성 → iframe으로 제출 (CORS 무관, 페이지 이동 없음)
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = NOTIFICATION_SCRIPT_URL;
+      form.target = '_notifyFrame';
+      form.style.display = 'none';
+
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'payload';
+      input.value = JSON.stringify(data);
+      form.appendChild(input);
+
+      document.body.appendChild(form);
+      form.submit();
+      setTimeout(function() { form.remove(); }, 1000);
+
+      console.log('[알림] form submit 완료');
     }
 
     // 숙명 도메인 확인
