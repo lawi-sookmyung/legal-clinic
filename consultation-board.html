@@ -26,10 +26,10 @@
       --shadow-sm: 0 2px 8px rgba(123, 63, 63, 0.06);
       --shadow-md: 0 4px 20px rgba(123, 63, 63, 0.10);
       --shadow-lg: 0 8px 40px rgba(123, 63, 63, 0.12);
-      --status-pending: #E67E22;
-      --status-assigned: #2980B9;
-      --status-progress: #8E44AD;
-      --status-complete: #27AE60;
+      --status-pending: #B8847A;
+      --status-assigned: #9C5C5C;
+      --status-progress: #7B3F3F;
+      --status-complete: #6B7B5C;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,9 +73,9 @@
       display: inline-flex; align-items: center; gap: 4px;
       padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
     }
-    .role-master { background: #F39C12; color: #fff; }
-    .role-lawyer { background: #3498DB; color: #fff; }
-    .role-clinic { background: #1ABC9C; color: #fff; }
+    .role-master { background: #7B3F3F; color: #fff; }
+    .role-lawyer { background: #9C5C5C; color: #fff; }
+    .role-clinic { background: #B8847A; color: #fff; }
     .role-student { background: rgba(255,255,255,.2); color: #fff; }
     .btn-auth {
       background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
@@ -96,12 +96,12 @@
 
     /* ── Security Notice ── */
     .security-notice {
-      background: linear-gradient(135deg, #FFF3E0, #FFF8E1);
-      border: 1px solid #FFE0B2; border-radius: 12px;
+      background: linear-gradient(135deg, var(--rose-gold-lightest), #FFF8F5);
+      border: 1px solid var(--rose-gold-light); border-radius: 12px;
       padding: 16px 20px; margin: 20px 0; display: flex; align-items: flex-start; gap: 12px;
     }
-    .security-notice svg { width: 24px; height: 24px; color: #E65100; flex-shrink: 0; margin-top: 2px; }
-    .security-notice p { font-size: 13px; color: #5D4037; line-height: 1.6; margin: 0; }
+    .security-notice svg { width: 24px; height: 24px; color: var(--rose-gold-primary); flex-shrink: 0; margin-top: 2px; }
+    .security-notice p { font-size: 13px; color: var(--medium-text); line-height: 1.6; margin: 0; }
 
     /* ── Board Container ── */
     .board-container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
@@ -150,11 +150,11 @@
       display: inline-flex; align-items: center; gap: 4px;
       padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
     }
-    .status-pending { background: #FFF3E0; color: #E65100; }
-    .status-assigned { background: #E3F2FD; color: #1565C0; }
-    .status-progress { background: #F3E5F5; color: #6A1B9A; }
-    .status-complete { background: #E8F5E9; color: #2E7D32; }
-    .status-notice { background: #FFF8E1; color: #F57F17; }
+    .status-pending { background: #FAF0ED; color: #9C6B5C; }
+    .status-assigned { background: #F5EAEA; color: #7B3F3F; }
+    .status-progress { background: #F0E0E0; color: #6B2D2D; }
+    .status-complete { background: #EEF2E8; color: #5A6B48; }
+    .status-notice { background: #F8F0E0; color: #8B7040; }
 
     .category-badge {
       display: inline-block; padding: 3px 8px; border-radius: 6px;
@@ -165,7 +165,7 @@
     .lawyer-name {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
-      background: #E3F2FD; color: #1565C0;
+      background: var(--rose-gold-lighter); color: var(--rose-gold-dark);
     }
 
     .empty-state {
@@ -272,11 +272,11 @@
 
     /* ── Lawyer Assign Button ── */
     .btn-assign {
-      background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB;
+      background: var(--rose-gold-lighter); color: var(--rose-gold-dark); border: 1px solid var(--rose-gold-light);
       padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 13px;
       cursor: pointer; transition: all .3s; display: inline-flex; align-items: center; gap: 6px;
     }
-    .btn-assign:hover { background: #BBDEFB; }
+    .btn-assign:hover { background: var(--rose-gold-light); }
 
     /* ── Admin Panel ── */
     .admin-panel {
@@ -291,11 +291,11 @@
     .lawyer-chip {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-      background: #E3F2FD; color: #1565C0; border: 1px solid #BBDEFB;
+      background: var(--rose-gold-lighter); color: var(--rose-gold-dark); border: 1px solid var(--rose-gold-light);
     }
     .lawyer-chip .remove-btn {
       width: 18px; height: 18px; border-radius: 50%; border: none;
-      background: rgba(21,101,192,.15); color: #1565C0; cursor: pointer;
+      background: rgba(123,63,63,.12); color: var(--rose-gold-dark); cursor: pointer;
       display: flex; align-items: center; justify-content: center; font-size: 12px;
     }
     .add-lawyer-row { display: flex; gap: 8px; }
@@ -312,9 +312,9 @@
 
     /* ── Clinic Manager Email ── */
     .email-panel {
-      background: #E0F7FA; border-radius: 10px; padding: 16px; margin-top: 16px;
+      background: var(--rose-gold-lightest); border-radius: 10px; padding: 16px; margin-top: 16px;
     }
-    .email-panel h5 { font-size: 14px; font-weight: 700; color: #006064; margin-bottom: 10px; }
+    .email-panel h5 { font-size: 14px; font-weight: 700; color: var(--rose-gold-dark); margin-bottom: 10px; }
     .email-select { margin-bottom: 8px; }
 
     /* ── Login Screen ── */
@@ -383,7 +383,7 @@
     }
     .toast-msg.success { border-left: 4px solid #27AE60; }
     .toast-msg.error { border-left: 4px solid #E53935; }
-    .toast-msg.info { border-left: 4px solid #2980B9; }
+    .toast-msg.info { border-left: 4px solid var(--rose-gold-primary); }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
 
     /* ── Responsive ── */
@@ -396,6 +396,16 @@
       .modal-body { padding: 16px 20px 20px; }
       .admin-panel { padding: 16px; }
     }
+
+    /* ── Board Footer ── */
+    .board-footer {
+      background: linear-gradient(135deg, var(--rose-gold-dark), var(--rose-gold-primary));
+      color: rgba(255,255,255,.7); padding: 32px 0; text-align: center;
+      font-size: 12px; line-height: 1.8; margin-top: 0;
+    }
+    .board-footer strong { color: rgba(255,255,255,.9); }
+    .board-footer a { color: var(--rose-gold-light); text-decoration: none; }
+    .board-footer a:hover { color: #fff; }
 
     /* ── Hidden ── */
     .hidden { display: none !important; }
@@ -436,9 +446,9 @@
         </svg>
       </div>
       <h2>법률상담 게시판</h2>
-      <div id="maintenanceNotice" style="display:none;background:#FFF3E0;border:1px solid #FFB74D;border-radius:12px;padding:16px;margin-bottom:16px;">
-        <p style="font-size:14px;color:#E65100;font-weight:600;margin:0 0 4px 0;">시스템 점검 중</p>
-        <p style="font-size:13px;color:#5D4037;margin:0;">현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.</p>
+      <div id="maintenanceNotice" style="display:none;background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:12px;padding:16px;margin-bottom:16px;">
+        <p style="font-size:14px;color:var(--rose-gold-dark);font-weight:600;margin:0 0 4px 0;">시스템 점검 중</p>
+        <p style="font-size:13px;color:var(--medium-text);margin:0;">현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.</p>
       </div>
       <p>숙명 리걸클리닉 법률상담 게시판에 접속하려면<br>Google 계정으로 로그인해 주세요.</p>
       <button id="btnGoogleLogin" class="btn-google" onclick="handleLogin()">
@@ -516,7 +526,7 @@
       <!-- Clinic Manager Panel -->
       <div id="clinicPanel" class="admin-panel hidden">
         <h3>
-          <svg viewBox="0 0 24 24" fill="none" stroke="#1ABC9C" stroke-width="2" style="width:20px;height:20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width:20px;height:20px;">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
             <polyline points="22,6 12,13 2,6"/>
           </svg>
@@ -633,7 +643,7 @@
   <div id="writeModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <h3 id="writeModalTitle">📝 법률상담 신청</h3>
+        <h3 id="writeModalTitle">법률상담 신청</h3>
         <button class="modal-close" onclick="closeModal('writeModal')">✕</button>
       </div>
       <div class="modal-body">
@@ -670,8 +680,8 @@
           <label>연락처 (선택)</label>
           <input type="text" id="writeContact" class="form-input" placeholder="연락받을 전화번호 또는 이메일 (선택사항)">
         </div>
-        <div id="writeAgreeGroup" style="background:#F3E5F5;border-radius:10px;padding:14px;margin-bottom:16px;">
-          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:#4A148C;line-height:1.5;">
+        <div id="writeAgreeGroup" style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:10px;padding:14px;margin-bottom:16px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--rose-gold-dark);line-height:1.5;">
             <input type="checkbox" id="writeAgree" style="margin-top:3px;">
             상담 내용이 배정된 변호사에게 공유되는 것에 동의합니다. 
             법률상담의 모든 활동에 학교의 법적 책임이 전혀 없음을 확인합니다.
@@ -698,6 +708,15 @@
     </div>
   </div>
 
+  <!-- ============ FOOTER ============ -->
+  <footer id="boardFooter" class="board-footer hidden">
+    <div class="container">
+      <strong>숙명 리걸클리닉</strong> SOOKMYUNG LEGAL CLINIC<br>
+      숙명여자대학교 법학연구소 · 서울특별시 용산구 청파로47길 100<br>
+      <a href="https://lawi-sookmyung.github.io/legal-clinic/">lawi-sookmyung.github.io/legal-clinic</a>
+    </div>
+  </footer>
+
   <!-- ============ EDIT MODAL ============ -->
   <div id="editModal" class="modal-overlay">
     <div class="modal-box">
@@ -707,8 +726,8 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="editPostId">
-        <div style="background:#FFF3E0;border:1px solid #FFB74D;border-radius:10px;padding:14px;margin-bottom:16px;">
-          <p style="font-size:13px;color:#E65100;margin:0;">수정 전 내용은 수정 이력으로 보존됩니다.</p>
+        <div style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:10px;padding:14px;margin-bottom:16px;">
+          <p style="font-size:13px;color:var(--rose-gold-dark);margin:0;">수정 전 내용은 수정 이력으로 보존됩니다.</p>
         </div>
         <div style="margin-bottom:16px;">
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">수정할 내용</label>
@@ -789,13 +808,10 @@
     const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeYy5syExEwFOhxaoMR7l0YjPdWiEz7qn6XlwExchgLikwQg8rTsANafcGcx2iGRasxA/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
-    // 알림 전송 — hidden form + iframe (상담 폼과 동일한 방식, 가장 안정적)
+    // 알림 전송 — hidden form + iframe (CORS 무관, Apps Script 완벽 호환)
     function sendNotification(data) {
       if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
-      
-      console.log('[알림] 전송 시도:', data.type, data);
 
-      // 숨겨진 iframe (최초 1회 생성)
       var iframe = document.getElementById('_notifyFrame');
       if (!iframe) {
         iframe = document.createElement('iframe');
@@ -805,7 +821,6 @@
         document.body.appendChild(iframe);
       }
 
-      // 숨겨진 form 생성 → iframe으로 제출 (CORS 무관, 페이지 이동 없음)
       var form = document.createElement('form');
       form.method = 'POST';
       form.action = NOTIFICATION_SCRIPT_URL;
@@ -821,8 +836,6 @@
       document.body.appendChild(form);
       form.submit();
       setTimeout(function() { form.remove(); }, 1000);
-
-      console.log('[알림] form submit 완료');
     }
 
     // 숙명 도메인 확인
@@ -983,11 +996,13 @@
     function showLogin() {
       document.getElementById('loginScreen').classList.remove('hidden');
       document.getElementById('boardArea').classList.add('hidden');
+      document.getElementById('boardFooter').classList.add('hidden');
     }
 
     function showBoard() {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('boardArea').classList.remove('hidden');
+      document.getElementById('boardFooter').classList.remove('hidden');
 
       // 사용자 정보 표시
       document.getElementById('userAvatar').src = currentUser.photoURL || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239C5C5C"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>';
@@ -1339,9 +1354,9 @@
 
       body.innerHTML = paginated.map((post, i) => {
         const isNotice = post.isNotice;
-        const num = isNotice ? '📢' : (sorted.length - notices.length - (start + i - (start < notices.length ? 0 : notices.length)) + (start >= notices.length ? 0 : 0));
+        const num = isNotice ? '<span style="font-size:11px;font-weight:700;color:var(--rose-gold-primary);">공지</span>' : (sorted.length - notices.length - (start + i - (start < notices.length ? 0 : notices.length)) + (start >= notices.length ? 0 : 0));
         const realIdx = sorted.indexOf(post);
-        const displayNum = isNotice ? '📢' : (regular.length - regular.indexOf(post));
+        const displayNum = isNotice ? '<span style="font-size:11px;font-weight:700;color:var(--rose-gold-primary);">공지</span>' : (regular.length - regular.indexOf(post));
         const date = post.createdAt ? formatDate(post.createdAt) : '-';
         const statusHTML = getStatusBadge(post.status);
         const lawyerHTML = isNotice
@@ -1357,7 +1372,7 @@
           ? '' 
           : `onclick="openDetail('${post.id}')" style="cursor:pointer;"`;
 
-        const rowStyle = isNotice ? 'background:#FFF8E1;' : '';
+        const rowStyle = isNotice ? 'background:#FAF7F5;' : '';
 
         return `
           <tr ${titleClick} style="${rowStyle}">
@@ -1420,7 +1435,7 @@
 
       // 클리닉 매니저: 공지사항 모드
       const isNoticeMode = currentRole === ROLES.CLINIC_MANAGER;
-      document.getElementById('writeModalTitle').textContent = isNoticeMode ? '📢 공지사항 등록' : '📝 법률상담 신청';
+      document.getElementById('writeModalTitle').textContent = isNoticeMode ? '공지사항 등록' : '법률상담 신청';
       document.getElementById('writeSecurityNotice').style.display = isNoticeMode ? 'none' : 'flex';
       document.getElementById('writeContactGroup').style.display = isNoticeMode ? 'none' : 'block';
       document.getElementById('writeAgreeGroup').style.display = isNoticeMode ? 'none' : 'block';
@@ -1436,7 +1451,7 @@
         if (!noticeOpt) {
           const opt = document.createElement('option');
           opt.value = '공지사항';
-          opt.textContent = '📢 공지사항';
+          opt.textContent = '공지사항';
           categorySelect.insertBefore(opt, categorySelect.options[1]);
         }
       } else {
@@ -1578,7 +1593,7 @@
         let editBtnHTML = '';
         if (!post.isNotice && currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase()) {
           editBtnHTML = `
-            <button style="background:#E3F2FD;color:#1565C0;border:1px solid #90CAF9;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+            <button style="background:var(--rose-gold-lighter);color:var(--rose-gold-dark);border:1px solid var(--rose-gold-light);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="openEditModal('${postId}')">내용 수정</button>
           `;
         }
@@ -1597,7 +1612,7 @@
             repliesHTML = replyItems.map(r => {
               const isStudentReply = r.replyType === 'student_followup';
               const label = isStudentReply ? '추가 문의' : '변호사 답변';
-              const bgColor = isStudentReply ? '#F3E5F5' : '#FFF9F5';
+              const bgColor = isStudentReply ? 'var(--rose-gold-lightest)' : '#FFF9F5';
               const borderColor = isStudentReply ? '#CE93D8' : '#E8D5C4';
               return `
               <div class="reply-item" style="background:${bgColor};border-left:3px solid ${borderColor};">
@@ -1939,12 +1954,6 @@
         });
 
         // 변호사 알림 발송 (선택한 경우)
-        console.log('Edit notification check:', {
-          notifyLawyer: notifyLawyer,
-          assignedLawyer: post.assignedLawyer,
-          assignedLawyerName: post.assignedLawyerName
-        });
-
         if (notifyLawyer && post.assignedLawyer) {
           sendNotification({
             type: 'content_edited',
@@ -2029,7 +2038,7 @@
 
     function getStatusBadge(status) {
       const map = {
-        'notice': '<span class="status-badge status-notice">📢 공지</span>',
+        'notice': '<span class="status-badge status-notice">공지</span>',
         'pending': '<span class="status-badge status-pending">대기중</span>',
         'assigned': '<span class="status-badge status-assigned">배정완료</span>',
         'in_progress': '<span class="status-badge status-progress">진행중</span>',
