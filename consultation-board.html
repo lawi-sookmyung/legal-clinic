@@ -436,6 +436,10 @@
         </svg>
       </div>
       <h2>법률상담 게시판</h2>
+      <div id="maintenanceNotice" style="display:none;background:#FFF3E0;border:1px solid #FFB74D;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <p style="font-size:14px;color:#E65100;font-weight:600;margin:0 0 4px 0;">시스템 점검 중</p>
+        <p style="font-size:13px;color:#5D4037;margin:0;">현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.</p>
+      </div>
       <p>숙명 리걸클리닉 법률상담 게시판에 접속하려면<br>Google 계정으로 로그인해 주세요.</p>
       <button id="btnGoogleLogin" class="btn-google" onclick="handleLogin()">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
@@ -694,6 +698,36 @@
     </div>
   </div>
 
+  <!-- ============ EDIT MODAL ============ -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>상담 내용 수정</h3>
+        <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editPostId">
+        <div style="background:#FFF3E0;border:1px solid #FFB74D;border-radius:10px;padding:14px;margin-bottom:16px;">
+          <p style="font-size:13px;color:#E65100;margin:0;">수정 전 내용은 수정 이력으로 보존됩니다.</p>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">수정할 내용</label>
+          <textarea id="editContent" class="form-input" style="min-height:200px;" placeholder="수정할 내용을 작성해 주세요."></textarea>
+        </div>
+        <div id="editNotifyGroup" style="margin-bottom:16px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--medium-text);cursor:pointer;">
+            <input type="checkbox" id="editNotifyLawyer" style="width:16px;height:16px;">
+            배정된 변호사에게 수정 알림 이메일 발송
+          </label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
+          <button class="btn-secondary-action" onclick="closeModal('editModal')">취소</button>
+          <button class="btn-primary-action" onclick="submitEdit()">수정 완료</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ FIREBASE SDK ============ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -742,6 +776,9 @@
       'lawi@sookmyung.ac.kr'
     ];
 
+    // ──── 유지보수 모드 (true: 전체 접근 차단) ────
+    const MAINTENANCE_MODE = true;
+
     // 차단된 이메일 (Firebase 구현자 - 상담 내용 열람 불가)
     const BLOCKED_EMAILS = [
       'twinky0509@gmail.com'
@@ -749,7 +786,7 @@
 
     // 📧 이메일 알림 Google Apps Script URL
     // ⚠️ 배포 후 아래 URL을 실제 URL로 교체하세요
-    const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbFwYfu4PkcFwLvYGy6uRYC09whrEy9fO958P9nRf9GOjkjtZ8hGyLvAQvZjgFTDQnKQ/exec';
+    const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaUkD6-u6Z0KcObpv9FVpKBEsA6-nerftNjtBw9EmRW_vvv_Z-vvv_BvV6zD1dnhAOag/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
     // 알림 전송 (비동기, 실패해도 게시판 동작에 영향 없음)
@@ -783,12 +820,25 @@
     let currentPage = 1;
     const POSTS_PER_PAGE = 15;
 
+    // 유지보수 안내 표시
+    if (MAINTENANCE_MODE) {
+      document.getElementById('maintenanceNotice').style.display = 'block';
+    }
+
     // ╔══════════════════════════════════════════════════════════════╗
     // ║  🔑 인증 (Authentication)                                       ║
     // ╚══════════════════════════════════════════════════════════════╝
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
+
+        // 유지보수 모드: 모든 사용자 접근 차단
+        if (MAINTENANCE_MODE) {
+          showToast('현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.', 'error');
+          auth.signOut();
+          return;
+        }
+
         await determineRole(user);
         
         if (currentRole === ROLES.BLOCKED) {
@@ -1261,18 +1311,28 @@
 
       empty.classList.add('hidden');
 
+      // 공지사항 상단 고정 정렬
+      const notices = allPosts.filter(p => p.isNotice);
+      const regular = allPosts.filter(p => !p.isNotice);
+      const sorted = [...notices, ...regular];
+
       // 페이지네이션
-      const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+      const totalPages = Math.ceil(sorted.length / POSTS_PER_PAGE);
       const start = (currentPage - 1) * POSTS_PER_PAGE;
-      const paginated = allPosts.slice(start, start + POSTS_PER_PAGE);
+      const paginated = sorted.slice(start, start + POSTS_PER_PAGE);
 
       body.innerHTML = paginated.map((post, i) => {
-        const num = allPosts.length - start - i;
+        const isNotice = post.isNotice;
+        const num = isNotice ? '📢' : (sorted.length - notices.length - (start + i - (start < notices.length ? 0 : notices.length)) + (start >= notices.length ? 0 : 0));
+        const realIdx = sorted.indexOf(post);
+        const displayNum = isNotice ? '📢' : (regular.length - regular.indexOf(post));
         const date = post.createdAt ? formatDate(post.createdAt) : '-';
         const statusHTML = getStatusBadge(post.status);
-        const lawyerHTML = post.assignedLawyerName 
-          ? `<span class="lawyer-name">${post.assignedLawyerName}</span>` 
-          : '<span style="color:var(--light-text);font-size:12px;">미배정</span>';
+        const lawyerHTML = isNotice
+          ? '<span style="color:var(--light-text);font-size:12px;">—</span>'
+          : (post.assignedLawyerName 
+            ? `<span class="lawyer-name">${post.assignedLawyerName}</span>` 
+            : '<span style="color:var(--light-text);font-size:12px;">미배정</span>');
         const categoryHTML = post.category 
           ? `<span class="category-badge">${post.category}</span>` : '-';
 
@@ -1281,12 +1341,14 @@
           ? '' 
           : `onclick="openDetail('${post.id}')" style="cursor:pointer;"`;
 
+        const rowStyle = isNotice ? 'background:#FFF8E1;' : '';
+
         return `
-          <tr ${titleClick}>
-            <td style="color:var(--light-text);font-size:13px;">${num}</td>
+          <tr ${titleClick} style="${rowStyle}">
+            <td style="color:var(--light-text);font-size:13px;">${displayNum}</td>
             <td>${categoryHTML}</td>
             <td class="title-cell">
-              <span class="post-title">${escapeHTML(post.title || '(제목 없음)')}</span>
+              <span class="post-title" style="${isNotice ? 'font-weight:800;' : ''}">${escapeHTML(post.title || '(제목 없음)')}</span>
               ${post.replyCount ? `<span style="color:var(--rose-gold-primary);font-size:12px;margin-left:6px;">[${post.replyCount}]</span>` : ''}
             </td>
             <td>${statusHTML}</td>
@@ -1446,11 +1508,13 @@
       openModal('detailModal');
 
       try {
-        // 상담 내용 로드 (보안: 본인, 변호사, 마스터만)
+        // 상담 내용 로드 (보안: 본인, 변호사, 마스터만 / 공지사항은 전체 공개)
         let contentBody = '';
         let canReadContent = false;
 
-        if (currentRole === ROLES.MASTER) {
+        if (post.isNotice) {
+          canReadContent = true;
+        } else if (currentRole === ROLES.MASTER) {
           canReadContent = true;
         } else if (currentRole === ROLES.LAWYER) {
           canReadContent = true;
@@ -1463,12 +1527,44 @@
             const contentDoc = await db.collection('consultation_contents').doc(postId).get();
             if (contentDoc.exists) {
               contentBody = contentDoc.data().body || '';
+              var editHistory = contentDoc.data().editHistory || [];
             }
           } catch (e) {
             contentBody = '내용을 불러올 수 없습니다 (권한 부족).';
           }
         } else {
           contentBody = '열람 권한이 없습니다.';
+        }
+
+        // 수정 이력 HTML
+        let editHistoryHTML = '';
+        if (typeof editHistory !== 'undefined' && editHistory && editHistory.length > 0) {
+          const historyItems = editHistory.map((h, i) => {
+            const editDate = h.editedAt ? new Date(h.editedAt.seconds ? h.editedAt.seconds * 1000 : h.editedAt).toLocaleString('ko-KR') : '';
+            return `
+              <details style="margin-bottom:8px;">
+                <summary style="font-size:12px;color:var(--medium-text);cursor:pointer;padding:8px 12px;background:#FAFAFA;border-radius:8px;border:1px solid #EEE;">
+                  수정 전 내용 (${editDate})
+                </summary>
+                <div style="padding:12px;font-size:13px;color:var(--light-text);line-height:1.7;white-space:pre-wrap;background:#F9F9F9;border:1px solid #EEE;border-top:none;border-radius:0 0 8px 8px;">${escapeHTML(h.previousBody || '')}</div>
+              </details>
+            `;
+          }).join('');
+          editHistoryHTML = `
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid #EEE;">
+              <p style="font-size:13px;font-weight:600;color:var(--medium-text);margin-bottom:8px;">수정 이력 (${editHistory.length}회)</p>
+              ${historyItems}
+            </div>
+          `;
+        }
+
+        // 수정 버튼 (작성자 학생만, 공지사항 제외)
+        let editBtnHTML = '';
+        if (!post.isNotice && currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase()) {
+          editBtnHTML = `
+            <button style="background:#E3F2FD;color:#1565C0;border:1px solid #90CAF9;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+              onclick="openEditModal('${postId}')">내용 수정</button>
+          `;
         }
 
         // 답변 로드
@@ -1501,29 +1597,31 @@
           console.warn('Replies load error:', e);
         }
 
-        // 변호사 배정 버튼
+        // 변호사 배정 버튼 (공지사항 제외)
         let assignHTML = '';
-        if (currentRole === ROLES.LAWYER && !post.assignedLawyer) {
-          assignHTML = `
-            <button class="btn-assign" onclick="assignSelf('${postId}')">
-              이 상담을 맡겠습니다
-            </button>
-          `;
-        } else if (currentRole === ROLES.MASTER && !post.assignedLawyer) {
-          assignHTML = `
-            <div style="margin-top:12px;">
-              <select id="assignLawyerSelect" class="form-input" style="max-width:300px;display:inline-block;font-size:13px;">
-                <option value="">변호사를 선택하세요</option>
-                ${lawyerEmails.map(e => `<option value="${e}">${e}</option>`).join('')}
-              </select>
-              <button class="btn-assign" style="margin-left:8px;" onclick="assignLawyer('${postId}')">배정하기</button>
-            </div>
-          `;
+        if (!post.isNotice) {
+          if (currentRole === ROLES.LAWYER && !post.assignedLawyer) {
+            assignHTML = `
+              <button class="btn-assign" onclick="assignSelf('${postId}')">
+                이 상담을 맡겠습니다
+              </button>
+            `;
+          } else if (currentRole === ROLES.MASTER && !post.assignedLawyer) {
+            assignHTML = `
+              <div style="margin-top:12px;">
+                <select id="assignLawyerSelect" class="form-input" style="max-width:300px;display:inline-block;font-size:13px;">
+                  <option value="">변호사를 선택하세요</option>
+                  ${lawyerEmails.map(e => `<option value="${e}">${e}</option>`).join('')}
+                </select>
+                <button class="btn-assign" style="margin-left:8px;" onclick="assignLawyer('${postId}')">배정하기</button>
+              </div>
+            `;
+          }
         }
 
-        // 상태 변경 (마스터/배정된 변호사)
+        // 상태 변경 (마스터/배정된 변호사, 공지사항 제외)
         let statusChangeHTML = '';
-        if (currentRole === ROLES.MASTER || (currentRole === ROLES.LAWYER && post.assignedLawyer === currentUser.email.toLowerCase())) {
+        if (!post.isNotice && (currentRole === ROLES.MASTER || (currentRole === ROLES.LAWYER && post.assignedLawyer === currentUser.email.toLowerCase()))) {
           statusChangeHTML = `
             <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
               <button class="btn-secondary-action" style="padding:6px 14px;font-size:12px;" onclick="changeStatus('${postId}','pending')">대기</button>
@@ -1534,28 +1632,30 @@
           `;
         }
 
-        // 답변 작성 (변호사/마스터/작성자 학생)
+        // 답변 작성 (변호사/마스터/작성자 학생, 공지사항 제외)
         let replyFormHTML = '';
-        const isAuthorStudent = currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase();
-        if (currentRole === ROLES.LAWYER || currentRole === ROLES.MASTER) {
-          replyFormHTML = `
-            <div style="margin-top:16px;">
-              <textarea id="replyInput" class="form-input" placeholder="변호사 답변을 작성해 주세요..." style="min-height:100px;"></textarea>
-              <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;" onclick="submitReply('${postId}')">답변 등록</button>
-            </div>
-          `;
-        } else if (isAuthorStudent) {
-          replyFormHTML = `
-            <div style="margin-top:16px;">
-              <textarea id="replyInput" class="form-input" placeholder="추가 문의사항을 작성해 주세요..." style="min-height:100px;"></textarea>
-              <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;background:linear-gradient(135deg,#AB47BC,#7B1FA2);" onclick="submitReply('${postId}')">추가 문의 등록</button>
-            </div>
-          `;
+        if (!post.isNotice) {
+          const isAuthorStudent = currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase();
+          if (currentRole === ROLES.LAWYER || currentRole === ROLES.MASTER) {
+            replyFormHTML = `
+              <div style="margin-top:16px;">
+                <textarea id="replyInput" class="form-input" placeholder="변호사 답변을 작성해 주세요..." style="min-height:100px;"></textarea>
+                <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;" onclick="submitReply('${postId}')">답변 등록</button>
+              </div>
+            `;
+          } else if (isAuthorStudent) {
+            replyFormHTML = `
+              <div style="margin-top:16px;">
+                <textarea id="replyInput" class="form-input" placeholder="추가 문의사항을 작성해 주세요..." style="min-height:100px;"></textarea>
+                <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;background:linear-gradient(135deg,#AB47BC,#7B1FA2);" onclick="submitReply('${postId}')">추가 문의 등록</button>
+              </div>
+            `;
+          }
         }
 
-        // 삭제 버튼 (마스터만)
+        // 삭제 버튼 (마스터 또는 공지사항 작성자)
         let deleteHTML = '';
-        if (currentRole === ROLES.MASTER) {
+        if (currentRole === ROLES.MASTER || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
           deleteHTML = `
             <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="deletePost('${postId}')">게시물 삭제</button>
@@ -1575,6 +1675,9 @@
           </div>
 
           <div class="post-content-body">${escapeHTML(contentBody)}</div>
+
+          ${editBtnHTML}
+          ${editHistoryHTML}
 
           ${assignHTML}
           ${statusChangeHTML}
@@ -1731,6 +1834,101 @@
     }
 
     // ╔══════════════════════════════════════════════════════════════╗
+    // ║  ✏️ 상담 내용 수정                                                ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    async function openEditModal(postId) {
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) return;
+      if (post.authorEmail !== currentUser.email.toLowerCase()) return;
+
+      document.getElementById('editPostId').value = postId;
+      document.getElementById('editContent').value = '';
+      document.getElementById('editNotifyLawyer').checked = false;
+
+      // 변호사가 배정되어 있으면 알림 체크박스 표시
+      const notifyGroup = document.getElementById('editNotifyGroup');
+      notifyGroup.style.display = post.assignedLawyer ? 'block' : 'none';
+
+      // 현재 내용 로드
+      try {
+        const contentDoc = await db.collection('consultation_contents').doc(postId).get();
+        if (contentDoc.exists) {
+          document.getElementById('editContent').value = contentDoc.data().body || '';
+        }
+      } catch (e) {
+        showToast('내용을 불러올 수 없습니다.', 'error');
+        return;
+      }
+
+      openModal('editModal');
+    }
+
+    async function submitEdit() {
+      const postId = document.getElementById('editPostId').value;
+      const newBody = document.getElementById('editContent').value.trim();
+      const notifyLawyer = document.getElementById('editNotifyLawyer').checked;
+
+      if (!postId || !newBody) {
+        showToast('수정할 내용을 입력해 주세요.', 'error');
+        return;
+      }
+
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      try {
+        // 기존 내용 가져오기
+        const contentDoc = await db.collection('consultation_contents').doc(postId).get();
+        const oldBody = contentDoc.exists ? (contentDoc.data().body || '') : '';
+        const existingHistory = contentDoc.exists ? (contentDoc.data().editHistory || []) : [];
+
+        if (oldBody === newBody) {
+          showToast('변경된 내용이 없습니다.', 'info');
+          return;
+        }
+
+        // 수정 이력 추가
+        existingHistory.push({
+          previousBody: oldBody,
+          editedAt: new Date(),
+          editedBy: currentUser.email.toLowerCase()
+        });
+
+        // consultation_contents 업데이트
+        await db.collection('consultation_contents').doc(postId).update({
+          body: newBody,
+          editHistory: existingHistory,
+          editedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // consultations 메타 updatedAt 갱신
+        await db.collection('consultations').doc(postId).update({
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 변호사 알림 발송 (선택한 경우)
+        if (notifyLawyer && post.assignedLawyer) {
+          sendNotification({
+            type: 'content_edited',
+            lawyerEmail: post.assignedLawyer,
+            lawyerName: post.assignedLawyerName || '변호사',
+            studentName: currentUser.displayName || currentUser.email,
+            postTitle: post.title,
+            boardUrl: BOARD_URL
+          });
+        }
+
+        closeModal('editModal');
+        showToast('상담 내용이 수정되었습니다.', 'success');
+        await loadPosts();
+        openDetail(postId);
+      } catch (e) {
+        console.error('Edit error:', e);
+        showToast('수정 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
     // ║  🔄 상태 변경 / 🗑️ 삭제                                           ║
     // ╚══════════════════════════════════════════════════════════════╝
     async function changeStatus(postId, newStatus) {
@@ -1748,8 +1946,11 @@
     }
 
     async function deletePost(postId) {
-      if (currentRole !== ROLES.MASTER) return;
-      if (!confirm('이 상담 게시물을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+      const post = allPosts.find(p => p.id === postId);
+      const canDelete = currentRole === ROLES.MASTER || 
+        (currentRole === ROLES.CLINIC_MANAGER && post && post.isNotice && post.authorEmail === currentUser.email.toLowerCase());
+      if (!canDelete) return;
+      if (!confirm('이 게시물을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
 
       try {
         // 답변 삭제
