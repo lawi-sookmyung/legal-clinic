@@ -777,7 +777,7 @@
     ];
 
     // ──── 유지보수 모드 (true: 일반 사용자 접근 차단) ────
-    const MAINTENANCE_MODE = true;
+    const MAINTENANCE_MODE = false;
 
     // 차단된 이메일 (Firebase 구현자 - 상담 내용 열람 불가)
     const BLOCKED_EMAILS = [
@@ -835,7 +835,7 @@
         // 유지보수 모드: 마스터/클리닉 매니저만 접근 허용
         await determineRole(user);
 
-        if (MAINTENANCE_MODE && currentRole !== ROLES.MASTER && currentRole !== ROLES.CLINIC_MANAGER) {
+        if (MAINTENANCE_MODE && currentRole !== ROLES.MASTER && currentRole !== ROLES.CLINIC_MANAGER && currentRole !== ROLES.LAWYER) {
           showToast('현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.', 'error');
           auth.signOut();
           return;
