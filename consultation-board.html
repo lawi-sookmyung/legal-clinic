@@ -788,8 +788,7 @@
     // 하드코딩된 마스터 관리자 (Firestore에도 저장)
     const MASTER_EMAILS = [
       'smssky@sookmyung.ac.kr',
-      'fmlaw@sookmyung.ac.kr',
-      'lawi@sookmyung.ac.kr' // ★ 임시 마스터 권한 (삭제 예정)
+      'fmlaw@sookmyung.ac.kr'
     ];
 
     // 클리닉 매니저 + 법학연구소 (게시판 관리 + 변호사 등록 권한)
@@ -1015,7 +1014,7 @@
       // 역할 배지
       const roleEl = document.getElementById('userRole');
       const roleConfig = {
-        [ROLES.MASTER]: { text: '👑 관리자', class: 'role-master' },
+        [ROLES.MASTER]: { text: '관리자', class: 'role-master' },
         [ROLES.LAWYER]: { text: '변호사', class: 'role-lawyer' },
         [ROLES.CLINIC_MANAGER]: { text: '클리닉 관리', class: 'role-clinic' },
         [ROLES.STUDENT]: { text: '학생', class: 'role-student' }
