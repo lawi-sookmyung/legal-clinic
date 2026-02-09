@@ -6,7 +6,7 @@
   <title>숙명 리걸클리닉 | 법률상담 게시판</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --rose-gold-dark: #7B3F3F;
@@ -35,7 +35,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Noto Sans KR', 'Pretendard', -apple-system, sans-serif;
+      font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
       background: linear-gradient(135deg, var(--rose-gold-lightest) 0%, #fff 50%, var(--rose-gold-lighter) 100%);
       color: var(--dark-text);
       min-height: 100vh;
@@ -52,7 +52,7 @@
     }
     .brand-title {
       font-size: 22px; font-weight: 700; color: var(--rose-gold-dark);
-      font-family: 'Noto Serif KR', Georgia, serif; letter-spacing: 0.5px;
+      font-family: 'Noto Serif KR', 'Gowun Batang', Georgia, serif; letter-spacing: 0.5px;
     }
     .brand-subtitle { font-size: 11px; color: var(--light-text); letter-spacing: 1px; }
     .nav-link {
@@ -91,7 +91,7 @@
       padding: 50px 0 40px; color: white; text-align: center;
     }
     .page-header h1 {
-      font-family: 'Noto Serif KR', Georgia, serif; font-size: 30px; font-weight: 700; margin-bottom: 10px;
+      font-family: 'Noto Serif KR', 'Gowun Batang', Georgia, serif; font-size: 30px; font-weight: 700; margin-bottom: 10px;
     }
     .page-header p { font-size: 15px; opacity: .85; }
 
@@ -193,7 +193,7 @@
       display: flex; justify-content: space-between; align-items: center;
       position: sticky; top: 0; background: white; border-radius: 6px 6px 0 0; z-index: 2;
     }
-    .modal-header h3 { font-size: 20px; font-weight: 700; color: var(--dark-text); font-family: 'Noto Serif KR', Georgia, serif; }
+    .modal-header h3 { font-size: 20px; font-weight: 700; color: var(--dark-text); font-family: 'Noto Serif KR', 'Gowun Batang', Georgia, serif; }
     .modal-close {
       width: 36px; height: 36px; border-radius: 4px; border: none;
       background: var(--rose-gold-lightest); color: var(--medium-text);
@@ -245,7 +245,7 @@
     .post-detail-header {
       padding-bottom: 16px; border-bottom: 1px solid #f0e6e2; margin-bottom: 20px;
     }
-    .post-detail-title { font-size: 22px; font-weight: 800; color: var(--dark-text); margin-bottom: 12px; }
+    .post-detail-title { font-family: 'Noto Serif KR', 'Gowun Batang', Georgia, serif; font-size: 22px; font-weight: 700; color: var(--dark-text); margin-bottom: 12px; }
     .post-meta-row {
       display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--light-text);
     }
@@ -329,7 +329,7 @@
       box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
     }
     .login-card h2 {
-      font-family: 'Noto Serif KR', Georgia, serif; font-size: 26px; font-weight: 700;
+      font-family: 'Noto Serif KR', 'Gowun Batang', Georgia, serif; font-size: 26px; font-weight: 700;
       color: var(--dark-text); margin-bottom: 12px;
     }
     .login-card p { font-size: 14px; color: var(--medium-text); line-height: 1.6; margin-bottom: 32px; }
@@ -1614,7 +1614,7 @@
               const isStudentReply = r.replyType === 'student_followup';
               const label = isStudentReply ? '추가 문의' : '변호사 답변';
               const bgColor = isStudentReply ? 'var(--rose-gold-lightest)' : '#FFF9F5';
-              const borderColor = isStudentReply ? '#CE93D8' : '#E8D5C4';
+              const borderColor = isStudentReply ? 'var(--rose-gold-light)' : 'var(--rose-gold-medium)';
               return `
               <div class="reply-item" style="background:${bgColor};border-left:3px solid ${borderColor};">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1679,7 +1679,7 @@
             replyFormHTML = `
               <div style="margin-top:16px;">
                 <textarea id="replyInput" class="form-input" placeholder="추가 문의사항을 작성해 주세요..." style="min-height:100px;"></textarea>
-                <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;background:linear-gradient(135deg,#AB47BC,#7B1FA2);" onclick="submitReply('${postId}')">추가 문의 등록</button>
+                <button class="btn-primary-action" style="margin-top:8px;font-size:13px;padding:10px 20px;" onclick="submitReply('${postId}')">추가 문의 등록</button>
               </div>
             `;
           }
