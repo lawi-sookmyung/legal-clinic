@@ -1907,15 +1907,36 @@
         });
 
         // 변호사 알림 발송 (선택한 경우)
+        console.log('Edit notification check:', {
+          notifyLawyer: notifyLawyer,
+          assignedLawyer: post.assignedLawyer,
+          assignedLawyerName: post.assignedLawyerName
+        });
+
         if (notifyLawyer && post.assignedLawyer) {
-          sendNotification({
-            type: 'content_edited',
-            lawyerEmail: post.assignedLawyer,
-            lawyerName: post.assignedLawyerName || '변호사',
-            studentName: currentUser.displayName || currentUser.email,
-            postTitle: post.title,
-            boardUrl: BOARD_URL
-          });
+          try {
+            await fetch(NOTIFICATION_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({
+                type: 'content_edited',
+                lawyerEmail: post.assignedLawyer,
+                lawyerName: post.assignedLawyerName || '변호사',
+                studentName: currentUser.displayName || currentUser.email,
+                postTitle: post.title,
+                editedContent: newBody,
+                boardUrl: BOARD_URL
+              })
+            });
+            console.log('Edit notification sent to:', post.assignedLawyer);
+            showToast('수정 알림이 ' + post.assignedLawyer + '에게 발송되었습니다.', 'success');
+          } catch (notifyErr) {
+            console.error('Edit notification failed:', notifyErr);
+            showToast('알림 발송 실패: ' + notifyErr.message, 'error');
+          }
+        } else if (notifyLawyer && !post.assignedLawyer) {
+          showToast('배정된 변호사가 없어 알림을 보낼 수 없습니다.', 'error');
         }
 
         closeModal('editModal');
