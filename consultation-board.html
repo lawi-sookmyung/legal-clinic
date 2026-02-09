@@ -786,31 +786,36 @@
 
     // 📧 이메일 알림 Google Apps Script URL
     // ⚠️ 배포 후 아래 URL을 실제 URL로 교체하세요
-    const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw78RJtQaXl4_OJq-zWCC0DCZH2UZEvRswqZfFySBuQ-_p80UUoCYskFAO_NZMYh8sflA/exec';
+    const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeYy5syExEwFOhxaoMR7l0YjPdWiEz7qn6XlwExchgLikwQg8rTsANafcGcx2iGRasxA/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
-    // 알림 전송 — navigator.sendBeacon (가장 안정적)
+    // 알림 전송 — form-urlencoded (Apps Script에서 가장 안정적)
     function sendNotification(data) {
       if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
       
       var jsonStr = JSON.stringify(data);
       console.log('[알림] 전송 시도:', data.type, data);
 
-      // 방법 1: sendBeacon (권장 — CORS 무관, 페이지 이탈 시에도 전송)
+      // form-urlencoded로 전송 (CORS preflight 없음 + Apps Script 완벽 호환)
+      var formBody = 'payload=' + encodeURIComponent(jsonStr);
+
+      // 방법 1: sendBeacon (페이지 이탈에도 안정적)
       if (navigator.sendBeacon) {
-        var blob = new Blob([jsonStr], { type: 'text/plain;charset=UTF-8' });
+        var blob = new Blob([formBody], { type: 'application/x-www-form-urlencoded' });
         var sent = navigator.sendBeacon(NOTIFICATION_SCRIPT_URL, blob);
         console.log('[알림] sendBeacon 결과:', sent);
         if (sent) return;
       }
 
-      // 방법 2: fallback — XMLHttpRequest (동기)
+      // 방법 2: fallback — fetch
       try {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', NOTIFICATION_SCRIPT_URL, true);
-        xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
-        xhr.send(jsonStr);
-        console.log('[알림] XHR 전송 완료');
+        fetch(NOTIFICATION_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formBody
+        });
+        console.log('[알림] fetch 전송 완료');
       } catch (e) {
         console.warn('[알림] 전송 실패:', e);
       }
@@ -1226,17 +1231,12 @@
       const body = buildEmailBody();
 
       try {
-        await fetch(NOTIFICATION_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'clinic_email',
-            toEmails: emails,
-            subject: subject,
-            body: body,
-            senderName: currentUser.displayName || '클리닉 매니저'
-          })
+        sendNotification({
+          type: 'clinic_email',
+          toEmails: emails,
+          subject: subject,
+          body: body,
+          senderName: currentUser.displayName || '클리닉 매니저'
         });
         showToast(`${emails.length}명의 변호사에게 이메일이 발송되었습니다.`, 'success');
       } catch (e) {
