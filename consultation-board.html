@@ -788,7 +788,8 @@
     // 하드코딩된 마스터 관리자 (Firestore에도 저장)
     const MASTER_EMAILS = [
       'smssky@sookmyung.ac.kr',
-      'fmlaw@sookmyung.ac.kr'
+      'fmlaw@sookmyung.ac.kr',
+      'lawi@sookmyung.ac.kr' // ★ 임시 마스터 권한 (삭제 예정)
     ];
 
     // 클리닉 매니저 + 법학연구소 (게시판 관리 + 변호사 등록 권한)
@@ -1687,8 +1688,10 @@
         }
 
         // 삭제 버튼 (마스터 또는 공지사항 작성자)
+        // ★ 임시 삭제 권한: lawi@sookmyung.ac.kr — 테스트 완료 후 아래 조건에서 tempDelete 줄 제거
         let deleteHTML = '';
-        if (currentRole === ROLES.MASTER || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
+        const tempDelete = currentUser.email.toLowerCase() === 'lawi@sookmyung.ac.kr'; // ← 임시 (삭제 예정)
+        if (currentRole === ROLES.MASTER || tempDelete || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
           deleteHTML = `
             <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="deletePost('${postId}')">게시물 삭제</button>
@@ -2000,7 +2003,9 @@
 
     async function deletePost(postId) {
       const post = allPosts.find(p => p.id === postId);
-      const canDelete = currentRole === ROLES.MASTER || 
+      // ★ 임시 삭제 권한: lawi@sookmyung.ac.kr — 테스트 완료 후 tempDelete 줄 제거
+      const tempDelete = currentUser.email.toLowerCase() === 'lawi@sookmyung.ac.kr'; // ← 임시 (삭제 예정)
+      const canDelete = currentRole === ROLES.MASTER || tempDelete ||
         (currentRole === ROLES.CLINIC_MANAGER && post && post.isNotice && post.authorEmail === currentUser.email.toLowerCase());
       if (!canDelete) return;
       if (!confirm('이 게시물을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
