@@ -6,7 +6,7 @@
   <title>숙명 리걸클리닉 | 법률상담 게시판</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --rose-gold-dark: #7B3F3F;
@@ -35,10 +35,11 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Nanum Gothic', 'Pretendard', -apple-system, sans-serif;
+      font-family: 'Noto Sans KR', 'Pretendard', -apple-system, sans-serif;
       background: linear-gradient(135deg, var(--rose-gold-lightest) 0%, #fff 50%, var(--rose-gold-lighter) 100%);
       color: var(--dark-text);
       min-height: 100vh;
+      letter-spacing: -0.2px;
     }
 
     /* ── Navbar ── */
@@ -50,13 +51,13 @@
       padding: 12px 0;
     }
     .brand-title {
-      font-size: 22px; font-weight: 900; color: var(--rose-gold-dark);
-      font-family: 'Batang','바탕',serif; letter-spacing: 1px;
+      font-size: 22px; font-weight: 700; color: var(--rose-gold-dark);
+      font-family: 'Noto Serif KR', Georgia, serif; letter-spacing: 0.5px;
     }
     .brand-subtitle { font-size: 11px; color: var(--light-text); letter-spacing: 1px; }
     .nav-link {
       color: var(--medium-text)!important; font-weight: 500; font-size: 14px;
-      padding: 8px 14px!important; border-radius: 8px; transition: all .3s;
+      padding: 8px 14px!important; border-radius: 4px; transition: all .3s;
     }
     .nav-link:hover,.nav-link.active { color: var(--rose-gold-primary)!important; background: rgba(183,110,121,.08); }
 
@@ -71,7 +72,7 @@
     }
     .role-badge {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 3px; font-size: 11px; font-weight: 700;
     }
     .role-master { background: #7B3F3F; color: #fff; }
     .role-lawyer { background: #9C5C5C; color: #fff; }
@@ -79,7 +80,7 @@
     .role-student { background: rgba(255,255,255,.2); color: #fff; }
     .btn-auth {
       background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
-      color: white; padding: 6px 18px; border-radius: 20px; font-size: 13px;
+      color: white; padding: 6px 18px; border-radius: 4px; font-size: 13px;
       font-weight: 600; cursor: pointer; transition: all .3s;
     }
     .btn-auth:hover { background: rgba(255,255,255,.3); }
@@ -90,21 +91,21 @@
       padding: 50px 0 40px; color: white; text-align: center;
     }
     .page-header h1 {
-      font-family: 'Nanum Myeongjo',serif; font-size: 32px; font-weight: 800; margin-bottom: 10px;
+      font-family: 'Noto Serif KR', Georgia, serif; font-size: 30px; font-weight: 700; margin-bottom: 10px;
     }
     .page-header p { font-size: 15px; opacity: .85; }
 
     /* ── Security Notice ── */
     .security-notice {
       background: linear-gradient(135deg, var(--rose-gold-lightest), #FFF8F5);
-      border: 1px solid var(--rose-gold-light); border-radius: 12px;
+      border: 1px solid var(--rose-gold-light); border-radius: 4px;
       padding: 16px 20px; margin: 20px 0; display: flex; align-items: flex-start; gap: 12px;
     }
     .security-notice svg { width: 24px; height: 24px; color: var(--rose-gold-primary); flex-shrink: 0; margin-top: 2px; }
     .security-notice p { font-size: 13px; color: var(--medium-text); line-height: 1.6; margin: 0; }
 
     /* ── Board Container ── */
-    .board-container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+    .board-container { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
 
     /* ── Board Actions ── */
     .board-actions {
@@ -118,7 +119,7 @@
     }
     .btn-write {
       background: linear-gradient(135deg, var(--rose-gold-primary), var(--rose-gold-dark));
-      color: white; border: none; padding: 10px 24px; border-radius: 25px;
+      color: white; border: none; padding: 10px 24px; border-radius: 4px;
       font-weight: 700; font-size: 14px; cursor: pointer;
       box-shadow: var(--shadow-md); transition: all .3s;
       display: flex; align-items: center; gap: 8px;
@@ -127,7 +128,7 @@
 
     /* ── Table ── */
     .board-table-wrap {
-      background: white; border-radius: 16px; overflow: hidden;
+      background: white; border-radius: 4px; overflow: hidden;
       box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
     }
     .board-table { width: 100%; border-collapse: collapse; }
@@ -148,7 +149,7 @@
 
     .status-badge {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 3px; font-size: 11px; font-weight: 700;
     }
     .status-pending { background: #FAF0ED; color: #9C6B5C; }
     .status-assigned { background: #F5EAEA; color: #7B3F3F; }
@@ -157,14 +158,14 @@
     .status-notice { background: #F8F0E0; color: #8B7040; }
 
     .category-badge {
-      display: inline-block; padding: 3px 8px; border-radius: 6px;
+      display: inline-block; padding: 3px 8px; border-radius: 3px;
       font-size: 11px; font-weight: 600;
       background: var(--rose-gold-lighter); color: var(--rose-gold-dark);
     }
 
     .lawyer-name {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;
       background: var(--rose-gold-lighter); color: var(--rose-gold-dark);
     }
 
@@ -184,17 +185,17 @@
     }
     .modal-overlay.active { display: flex; }
     .modal-box {
-      background: white; border-radius: 20px; width: 100%; max-width: 700px;
+      background: white; border-radius: 6px; width: 100%; max-width: 780px;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2);
     }
     .modal-header {
       padding: 24px 28px 16px; border-bottom: 1px solid #f0e6e2;
       display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; background: white; border-radius: 20px 20px 0 0; z-index: 2;
+      position: sticky; top: 0; background: white; border-radius: 6px 6px 0 0; z-index: 2;
     }
-    .modal-header h3 { font-size: 20px; font-weight: 800; color: var(--dark-text); }
+    .modal-header h3 { font-size: 20px; font-weight: 700; color: var(--dark-text); font-family: 'Noto Serif KR', Georgia, serif; }
     .modal-close {
-      width: 36px; height: 36px; border-radius: 50%; border: none;
+      width: 36px; height: 36px; border-radius: 4px; border: none;
       background: var(--rose-gold-lightest); color: var(--medium-text);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: all .3s;
@@ -211,7 +212,7 @@
     .form-group label .required { color: #E53935; margin-left: 2px; }
     .form-input {
       width: 100%; padding: 12px 16px; border: 1.5px solid var(--rose-gold-light);
-      border-radius: 10px; font-size: 14px; font-family: inherit;
+      border-radius: 4px; font-size: 14px; font-family: inherit;
       transition: all .3s; background: white; color: var(--dark-text);
     }
     .form-input:focus {
@@ -228,14 +229,14 @@
     }
     .btn-primary-action {
       background: linear-gradient(135deg, var(--rose-gold-primary), var(--rose-gold-dark));
-      color: white; border: none; padding: 12px 28px; border-radius: 25px;
+      color: white; border: none; padding: 12px 28px; border-radius: 4px;
       font-weight: 700; font-size: 14px; cursor: pointer; transition: all .3s;
     }
     .btn-primary-action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn-primary-action:disabled { opacity: .5; cursor: not-allowed; transform: none; }
     .btn-secondary-action {
       background: var(--rose-gold-lightest); color: var(--medium-text);
-      border: 1px solid var(--rose-gold-light); padding: 12px 28px; border-radius: 25px;
+      border: 1px solid var(--rose-gold-light); padding: 12px 28px; border-radius: 4px;
       font-weight: 600; font-size: 14px; cursor: pointer; transition: all .3s;
     }
     .btn-secondary-action:hover { background: var(--rose-gold-lighter); }
@@ -256,14 +257,14 @@
 
     /* ── Reply Section ── */
     .reply-section {
-      background: #F8F6F4; border-radius: 12px; padding: 20px; margin-top: 20px;
+      background: #F8F6F4; border-radius: 4px; padding: 20px; margin-top: 20px;
     }
     .reply-section h4 {
       font-size: 15px; font-weight: 700; color: var(--dark-text); margin-bottom: 16px;
       display: flex; align-items: center; gap: 8px;
     }
     .reply-item {
-      background: white; border-radius: 10px; padding: 16px; margin-bottom: 10px;
+      background: white; border-radius: 4px; padding: 16px; margin-bottom: 10px;
       border: 1px solid var(--border-color);
     }
     .reply-author { font-size: 13px; font-weight: 700; color: var(--rose-gold-primary); margin-bottom: 4px; }
@@ -273,14 +274,14 @@
     /* ── Lawyer Assign Button ── */
     .btn-assign {
       background: var(--rose-gold-lighter); color: var(--rose-gold-dark); border: 1px solid var(--rose-gold-light);
-      padding: 8px 20px; border-radius: 20px; font-weight: 700; font-size: 13px;
+      padding: 8px 20px; border-radius: 4px; font-weight: 700; font-size: 13px;
       cursor: pointer; transition: all .3s; display: inline-flex; align-items: center; gap: 6px;
     }
     .btn-assign:hover { background: var(--rose-gold-light); }
 
     /* ── Admin Panel ── */
     .admin-panel {
-      background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px;
+      background: white; border-radius: 4px; padding: 24px; margin-bottom: 24px;
       box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
     }
     .admin-panel h3 {
@@ -290,7 +291,7 @@
     .lawyer-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
     .lawyer-chip {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      padding: 6px 12px; border-radius: 3px; font-size: 12px; font-weight: 600;
       background: var(--rose-gold-lighter); color: var(--rose-gold-dark); border: 1px solid var(--rose-gold-light);
     }
     .lawyer-chip .remove-btn {
@@ -301,18 +302,18 @@
     .add-lawyer-row { display: flex; gap: 8px; }
     .add-lawyer-row input {
       flex: 1; padding: 10px 14px; border: 1.5px solid var(--rose-gold-light);
-      border-radius: 10px; font-size: 13px; font-family: inherit;
+      border-radius: 4px; font-size: 13px; font-family: inherit;
     }
     .add-lawyer-row input:focus { outline: none; border-color: var(--rose-gold-primary); }
     .btn-add-lawyer {
-      padding: 10px 20px; border-radius: 10px; border: none;
+      padding: 10px 20px; border-radius: 4px; border: none;
       background: var(--rose-gold-primary); color: white;
       font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;
     }
 
     /* ── Clinic Manager Email ── */
     .email-panel {
-      background: var(--rose-gold-lightest); border-radius: 10px; padding: 16px; margin-top: 16px;
+      background: var(--rose-gold-lightest); border-radius: 4px; padding: 16px; margin-top: 16px;
     }
     .email-panel h5 { font-size: 14px; font-weight: 700; color: var(--rose-gold-dark); margin-bottom: 10px; }
     .email-select { margin-bottom: 8px; }
@@ -323,19 +324,19 @@
       min-height: calc(100vh - 80px); padding: 40px 20px;
     }
     .login-card {
-      background: white; border-radius: 24px; padding: 48px 40px;
+      background: white; border-radius: 6px; padding: 48px 40px;
       max-width: 440px; width: 100%; text-align: center;
       box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
     }
     .login-card h2 {
-      font-family: 'Nanum Myeongjo',serif; font-size: 26px; font-weight: 800;
+      font-family: 'Noto Serif KR', Georgia, serif; font-size: 26px; font-weight: 700;
       color: var(--dark-text); margin-bottom: 12px;
     }
     .login-card p { font-size: 14px; color: var(--medium-text); line-height: 1.6; margin-bottom: 32px; }
     .btn-google {
       display: inline-flex; align-items: center; gap: 12px;
       background: white; border: 2px solid #e0dcd8; padding: 14px 32px;
-      border-radius: 30px; font-size: 15px; font-weight: 700; color: var(--dark-text);
+      border-radius: 4px; font-size: 15px; font-weight: 700; color: var(--dark-text);
       cursor: pointer; transition: all .3s; width: 100%; justify-content: center;
     }
     .btn-google:hover { border-color: var(--rose-gold-primary); box-shadow: var(--shadow-md); }
@@ -366,7 +367,7 @@
       display: flex; justify-content: center; gap: 4px; margin-top: 24px;
     }
     .page-btn {
-      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--rose-gold-light);
+      width: 36px; height: 36px; border-radius: 4px; border: 1px solid var(--rose-gold-light);
       background: white; color: var(--medium-text); font-size: 13px; font-weight: 600;
       cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
     }
@@ -376,7 +377,7 @@
     /* ── Toast ── */
     .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
     .toast-msg {
-      background: white; border-radius: 12px; padding: 14px 20px;
+      background: white; border-radius: 4px; padding: 14px 20px;
       box-shadow: 0 8px 30px rgba(0,0,0,.15); font-size: 14px; font-weight: 600;
       display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
       animation: slideIn .3s ease;
@@ -392,7 +393,7 @@
       .board-table th:nth-child(5), .board-table td:nth-child(5) { display: none; }
       .board-actions { flex-direction: column; }
       .page-header h1 { font-size: 24px; }
-      .modal-box { margin: 10px; border-radius: 16px; }
+      .modal-box { margin: 10px; border-radius: 6px; }
       .modal-body { padding: 16px 20px 20px; }
       .admin-panel { padding: 16px; }
     }
@@ -440,13 +441,13 @@
   <!-- ============ LOGIN SCREEN ============ -->
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
-      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--rose-gold-light),var(--rose-gold-lighter));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+      <div style="width:72px;height:72px;border-radius:6px;background:linear-gradient(135deg,var(--rose-gold-light),var(--rose-gold-lighter));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-dark)" stroke-width="2" style="width:36px;height:36px;">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
       <h2>법률상담 게시판</h2>
-      <div id="maintenanceNotice" style="display:none;background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div id="maintenanceNotice" style="display:none;background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:4px;padding:16px;margin-bottom:16px;">
         <p style="font-size:14px;color:var(--rose-gold-dark);font-weight:600;margin:0 0 4px 0;">시스템 점검 중</p>
         <p style="font-size:13px;color:var(--medium-text);margin:0;">현재 시스템 점검 중입니다. 잠시 후 다시 이용해 주세요.</p>
       </div>
@@ -541,15 +542,15 @@
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">
             수신 변호사 선택
             <button type="button" onclick="toggleAllLawyerCheckboxes()" 
-              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid var(--rose-gold-primary);background:#fff;color:var(--rose-gold-primary);border-radius:12px;cursor:pointer;">전체 선택/해제</button>
+              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid var(--rose-gold-primary);background:#fff;color:var(--rose-gold-primary);border-radius:3px;cursor:pointer;">전체 선택/해제</button>
           </label>
-          <div id="emailLawyerSelect" style="max-height:140px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:10px;background:#FAFAFA;"></div>
+          <div id="emailLawyerSelect" style="max-height:140px;overflow-y:auto;border:1px solid var(--border-color);border-radius:4px;padding:10px;background:#FAFAFA;"></div>
         </div>
 
         <!-- 대기 상담 포함 -->
         <div style="margin-bottom:14px;">
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:8px;">대기 중 상담 건 포함 (선택)</label>
-          <div id="pendingPostsSelect" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-color);border-radius:8px;padding:10px;background:#FAFAFA;">
+          <div id="pendingPostsSelect" style="max-height:120px;overflow-y:auto;border:1px solid var(--border-color);border-radius:4px;padding:10px;background:#FAFAFA;">
             <span style="font-size:12px;color:#999;">게시물 로드 후 표시됩니다</span>
           </div>
         </div>
@@ -567,7 +568,7 @@
           <label style="font-size:13px;font-weight:700;color:var(--dark-text);display:block;margin-bottom:6px;">
             이메일 본문
             <button type="button" onclick="resetClinicEmailBody()" 
-              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid #ccc;background:#fff;color:#666;border-radius:12px;cursor:pointer;">기본 템플릿</button>
+              style="margin-left:8px;font-size:11px;padding:3px 10px;border:1px solid #ccc;background:#fff;color:#666;border-radius:3px;cursor:pointer;">기본 템플릿</button>
           </label>
           <textarea id="clinicEmailBody" class="form-input" style="min-height:140px;font-size:13px;line-height:1.6;"></textarea>
         </div>
@@ -680,7 +681,7 @@
           <label>연락처 (선택)</label>
           <input type="text" id="writeContact" class="form-input" placeholder="연락받을 전화번호 또는 이메일 (선택사항)">
         </div>
-        <div id="writeAgreeGroup" style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div id="writeAgreeGroup" style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:4px;padding:14px;margin-bottom:16px;">
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--rose-gold-dark);line-height:1.5;">
             <input type="checkbox" id="writeAgree" style="margin-top:3px;">
             상담 내용이 배정된 변호사에게 공유되는 것에 동의합니다. 
@@ -726,7 +727,7 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="editPostId">
-        <div style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:4px;padding:14px;margin-bottom:16px;">
           <p style="font-size:13px;color:var(--rose-gold-dark);margin:0;">수정 전 내용은 수정 이력으로 보존됩니다.</p>
         </div>
         <div style="margin-bottom:16px;">
@@ -1574,10 +1575,10 @@
             const editDate = h.editedAt ? new Date(h.editedAt.seconds ? h.editedAt.seconds * 1000 : h.editedAt).toLocaleString('ko-KR') : '';
             return `
               <details style="margin-bottom:8px;">
-                <summary style="font-size:12px;color:var(--medium-text);cursor:pointer;padding:8px 12px;background:#FAFAFA;border-radius:8px;border:1px solid #EEE;">
+                <summary style="font-size:12px;color:var(--medium-text);cursor:pointer;padding:8px 12px;background:#FAFAFA;border-radius:4px;border:1px solid #EEE;">
                   수정 전 내용 (${editDate})
                 </summary>
-                <div style="padding:12px;font-size:13px;color:var(--light-text);line-height:1.7;white-space:pre-wrap;background:#F9F9F9;border:1px solid #EEE;border-top:none;border-radius:0 0 8px 8px;">${escapeHTML(h.previousBody || '')}</div>
+                <div style="padding:12px;font-size:13px;color:var(--light-text);line-height:1.7;white-space:pre-wrap;background:#F9F9F9;border:1px solid #EEE;border-top:none;border-radius:0 0 4px 4px;">${escapeHTML(h.previousBody || '')}</div>
               </details>
             `;
           }).join('');
@@ -1593,7 +1594,7 @@
         let editBtnHTML = '';
         if (!post.isNotice && currentRole === ROLES.STUDENT && post.authorEmail === currentUser.email.toLowerCase()) {
           editBtnHTML = `
-            <button style="background:var(--rose-gold-lighter);color:var(--rose-gold-dark);border:1px solid var(--rose-gold-light);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+            <button style="background:var(--rose-gold-lighter);color:var(--rose-gold-dark);border:1px solid var(--rose-gold-light);padding:6px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="openEditModal('${postId}')">내용 수정</button>
           `;
         }
@@ -1688,7 +1689,7 @@
         let deleteHTML = '';
         if (currentRole === ROLES.MASTER || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
           deleteHTML = `
-            <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+            <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="deletePost('${postId}')">게시물 삭제</button>
           `;
         }
