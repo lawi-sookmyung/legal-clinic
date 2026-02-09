@@ -789,18 +789,39 @@
     const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw78RJtQaXl4_OJq-zWCC0DCZH2UZEvRswqZfFySBuQ-_p80UUoCYskFAO_NZMYh8sflA/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
-    // 알림 전송 (비동기, 실패해도 게시판 동작에 영향 없음)
-    async function sendNotification(data) {
+    // 알림 전송 (hidden form + iframe 방식으로 안정적 전송)
+    function sendNotification(data) {
       if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
       try {
-        await fetch(NOTIFICATION_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+        // 숨겨진 iframe 생성 (최초 1회)
+        let iframe = document.getElementById('_notifyFrame');
+        if (!iframe) {
+          iframe = document.createElement('iframe');
+          iframe.id = '_notifyFrame';
+          iframe.name = '_notifyFrame';
+          iframe.style.display = 'none';
+          document.body.appendChild(iframe);
+        }
+
+        // 숨겨진 폼으로 전송 (CORS 우회)
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = NOTIFICATION_SCRIPT_URL;
+        form.target = '_notifyFrame';
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'payload';
+        input.value = JSON.stringify(data);
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        console.log('알림 전송 완료:', data.type, data);
       } catch (e) {
-        console.warn('알림 전송 실패 (무시):', e);
+        console.warn('알림 전송 실패:', e);
       }
     }
 
@@ -1930,27 +1951,16 @@
         });
 
         if (notifyLawyer && post.assignedLawyer) {
-          try {
-            await fetch(NOTIFICATION_SCRIPT_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain' },
-              body: JSON.stringify({
-                type: 'content_edited',
-                lawyerEmail: post.assignedLawyer,
-                lawyerName: post.assignedLawyerName || '변호사',
-                studentName: currentUser.displayName || currentUser.email,
-                postTitle: post.title,
-                editedContent: newBody,
-                boardUrl: BOARD_URL
-              })
-            });
-            console.log('Edit notification sent to:', post.assignedLawyer);
-            showToast('수정 알림이 ' + post.assignedLawyer + '에게 발송되었습니다.', 'success');
-          } catch (notifyErr) {
-            console.error('Edit notification failed:', notifyErr);
-            showToast('알림 발송 실패: ' + notifyErr.message, 'error');
-          }
+          sendNotification({
+            type: 'content_edited',
+            lawyerEmail: post.assignedLawyer,
+            lawyerName: post.assignedLawyerName || '변호사',
+            studentName: currentUser.displayName || currentUser.email,
+            postTitle: post.title,
+            editedContent: newBody,
+            boardUrl: BOARD_URL
+          });
+          showToast('수정 알림이 변호사에게 발송되었습니다.', 'success');
         } else if (notifyLawyer && !post.assignedLawyer) {
           showToast('배정된 변호사가 없어 알림을 보낼 수 없습니다.', 'error');
         }
