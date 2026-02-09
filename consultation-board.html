@@ -789,39 +789,30 @@
     const NOTIFICATION_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw78RJtQaXl4_OJq-zWCC0DCZH2UZEvRswqZfFySBuQ-_p80UUoCYskFAO_NZMYh8sflA/exec';
     const BOARD_URL = 'https://lawi-sookmyung.github.io/legal-clinic/consultation-board.html';
 
-    // 알림 전송 (hidden form + iframe 방식으로 안정적 전송)
+    // 알림 전송 — navigator.sendBeacon (가장 안정적)
     function sendNotification(data) {
       if (!NOTIFICATION_SCRIPT_URL || NOTIFICATION_SCRIPT_URL.includes('YOUR_')) return;
+      
+      var jsonStr = JSON.stringify(data);
+      console.log('[알림] 전송 시도:', data.type, data);
+
+      // 방법 1: sendBeacon (권장 — CORS 무관, 페이지 이탈 시에도 전송)
+      if (navigator.sendBeacon) {
+        var blob = new Blob([jsonStr], { type: 'text/plain;charset=UTF-8' });
+        var sent = navigator.sendBeacon(NOTIFICATION_SCRIPT_URL, blob);
+        console.log('[알림] sendBeacon 결과:', sent);
+        if (sent) return;
+      }
+
+      // 방법 2: fallback — XMLHttpRequest (동기)
       try {
-        // 숨겨진 iframe 생성 (최초 1회)
-        let iframe = document.getElementById('_notifyFrame');
-        if (!iframe) {
-          iframe = document.createElement('iframe');
-          iframe.id = '_notifyFrame';
-          iframe.name = '_notifyFrame';
-          iframe.style.display = 'none';
-          document.body.appendChild(iframe);
-        }
-
-        // 숨겨진 폼으로 전송 (CORS 우회)
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = NOTIFICATION_SCRIPT_URL;
-        form.target = '_notifyFrame';
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'payload';
-        input.value = JSON.stringify(data);
-        form.appendChild(input);
-
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-
-        console.log('알림 전송 완료:', data.type, data);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', NOTIFICATION_SCRIPT_URL, true);
+        xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
+        xhr.send(jsonStr);
+        console.log('[알림] XHR 전송 완료');
       } catch (e) {
-        console.warn('알림 전송 실패:', e);
+        console.warn('[알림] 전송 실패:', e);
       }
     }
 
