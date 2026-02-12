@@ -465,6 +465,81 @@
     </div>
   </div>
 
+  <!-- ============ 재학생 인증 (학생 전용) ============ -->
+  <div id="verificationScreen" class="hidden">
+    <div class="auth-bar">
+      <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="user-info">
+          <img id="verifyAvatar" class="user-avatar" src="" alt="">
+          <div>
+            <strong id="verifyName" style="font-size:14px;"></strong>
+            <span class="role-badge role-student ms-2">인증 대기</span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span id="verifyEmail" style="font-size:12px;opacity:.7;color:white;"></span>
+          <button class="btn-auth" onclick="handleLogout()">로그아웃</button>
+        </div>
+      </div>
+    </div>
+    <div class="login-screen" style="min-height:calc(100vh - 140px);">
+      <div class="login-card" style="max-width:520px;">
+        <!-- 미인증 / 반려 상태 -->
+        <div id="verifyUploadArea">
+          <div style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--rose-gold-light),var(--rose-gold-lighter));display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-dark)" stroke-width="2" style="width:36px;height:36px;">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
+              <polyline points="17,11 19,13 23,9"/>
+            </svg>
+          </div>
+          <h2 style="font-family:'Noto Serif KR',serif;font-size:22px;margin-bottom:12px;">재학생 인증</h2>
+          <p style="font-size:14px;color:var(--medium-text);line-height:1.6;margin-bottom:24px;">
+            법률상담 게시판을 이용하려면 <strong>재학생 인증</strong>이 필요합니다.<br>
+            아래 서류 중 하나를 촬영 또는 캡처하여 업로드해 주세요.
+          </p>
+          <div id="verifyRejectMsg" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:8px;padding:14px;margin-bottom:16px;text-align:left;">
+            <p style="font-size:13px;color:#C62828;font-weight:600;margin:0 0 4px 0;">인증이 반려되었습니다</p>
+            <p id="verifyRejectReason" style="font-size:13px;color:#5C4444;margin:0;"></p>
+          </div>
+          <div style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:8px;padding:16px;margin-bottom:20px;text-align:left;">
+            <p style="font-size:13px;color:var(--dark-text);margin:0 0 8px 0;font-weight:700;">제출 가능 서류</p>
+            <p style="font-size:13px;color:var(--medium-text);margin:0;line-height:1.7;">
+              · 재학증명서 (PDF 또는 이미지)<br>
+              · 숙명 포털 재학 상태 화면 캡처<br>
+              · 학생증 사진 (이름·학번 보이게)
+            </p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:13px;font-weight:700;color:var(--dark-text);margin-bottom:8px;">인증 서류 업로드 <span style="color:#E53935;">*</span></label>
+            <input type="file" id="verifyFileInput" accept="image/*,.pdf" 
+              style="width:100%;padding:10px;border:1.5px dashed var(--rose-gold-light);border-radius:8px;font-size:13px;background:white;cursor:pointer;">
+            <p style="font-size:11px;color:var(--light-text);margin-top:6px;">이미지(JPG, PNG) 또는 PDF · 최대 5MB</p>
+          </div>
+          <div id="verifyPreview" style="display:none;margin-bottom:16px;text-align:center;">
+            <img id="verifyPreviewImg" style="max-width:100%;max-height:300px;border-radius:8px;border:1px solid var(--border-color);">
+          </div>
+          <button id="verifySubmitBtn" class="btn-google" style="background:linear-gradient(135deg,var(--rose-gold-primary),var(--rose-gold-dark));color:white;border:none;" onclick="submitVerification()">
+            인증 요청 제출하기
+          </button>
+        </div>
+        <!-- 대기 상태 -->
+        <div id="verifyPendingArea" style="display:none;">
+          <div style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,#FFF8E1,#FFE082);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F9A825" stroke-width="2" style="width:36px;height:36px;">
+              <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
+            </svg>
+          </div>
+          <h2 style="font-family:'Noto Serif KR',serif;font-size:22px;margin-bottom:12px;">인증 검토 중</h2>
+          <p style="font-size:14px;color:var(--medium-text);line-height:1.6;">
+            제출하신 인증 서류를 관리자가 검토하고 있습니다.<br>
+            승인이 완료되면 게시판을 이용하실 수 있습니다.<br><br>
+            <span style="font-size:13px;color:var(--light-text);">보통 1~2 영업일 이내 처리됩니다.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ BOARD (로그인 후) ============ -->
   <div id="boardArea" class="hidden">
     <!-- Auth Bar -->
@@ -503,6 +578,23 @@
             모든 상담 내용은 <strong>작성자 본인</strong>과 <strong>배정된 상담 변호사</strong>만 열람할 수 있으며,
             Firestore 보안 규칙에 의해 데이터베이스 레벨에서 접근이 제어됩니다.
             게시판 관리 담당자는 상담 내용에 접근할 수 없습니다.</p>
+        </div>
+      </div>
+
+      <!-- Verification Admin Panel (Masters/Clinic Managers) -->
+      <div id="verifyAdminPanel" class="admin-panel hidden">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width:20px;height:20px;">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
+            <polyline points="17,11 19,13 23,9"/>
+          </svg>
+          재학생 인증 관리
+        </h3>
+        <p style="font-size:13px;color:var(--light-text);margin-bottom:16px;">
+          학생이 제출한 재학 인증 서류를 확인하고 승인/반려할 수 있습니다.
+        </p>
+        <div id="verifyRequestList">
+          <p style="font-size:13px;color:var(--light-text);">인증 요청을 불러오는 중...</p>
         </div>
       </div>
 
@@ -662,7 +754,6 @@
             <option value="">분류를 선택해 주세요</option>
             <option value="성범죄">성범죄 상담</option>
             <option value="노동">노동 상담</option>
-            <option value="상속">상속 상담</option>
             <option value="부동산">부동산 상담</option>
             <option value="가족법">가족법 상담</option>
             <option value="계약/민사">계약/민사 상담</option>
@@ -787,14 +878,12 @@
 
     // 하드코딩된 마스터 관리자 (Firestore에도 저장)
     const MASTER_EMAILS = [
-      'smssky@sookmyung.ac.kr',
       'fmlaw@sookmyung.ac.kr'
     ];
 
-    // 클리닉 매니저 + 법학연구소 (게시판 관리 + 변호사 등록 권한)
+    // 클리닉 매니저 (게시판 관리 + 변호사 등록 권한)
     const CLINIC_MANAGER_EMAILS = [
-      'lclin@sookmyung.ac.kr',
-      'lawi@sookmyung.ac.kr'
+      'lclin@sookmyung.ac.kr'
     ];
 
     // ──── 유지보수 모드 (true: 일반 사용자 접근 차단) ────
@@ -883,9 +972,25 @@
           return;
         }
 
-        showBoard();
-        await loadLawyers();
-        await loadPosts();
+        // 학생인 경우 재학생 인증 여부 확인
+        if (currentRole === ROLES.STUDENT) {
+          const vStatus = await checkVerificationStatus(user.uid);
+          if (vStatus === 'approved') {
+            showBoard();
+            await loadLawyers();
+            await loadPosts();
+          } else {
+            showVerificationScreen(vStatus);
+          }
+        } else {
+          showBoard();
+          await loadLawyers();
+          await loadPosts();
+          // 마스터/매니저: 인증 요청 목록 로드
+          if (currentRole === ROLES.MASTER || currentRole === ROLES.CLINIC_MANAGER) {
+            await loadVerificationRequests();
+          }
+        }
       } else {
         currentUser = null;
         currentRole = ROLES.BLOCKED;
@@ -972,7 +1077,7 @@
           await ref.set({
             masters: MASTER_EMAILS,
             lawyers: [],
-            clinic_managers: ['lclin@sookmyung.ac.kr', 'lawi@sookmyung.ac.kr'],
+            clinic_managers: ['lclin@sookmyung.ac.kr'],
             blocked: BLOCKED_EMAILS,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
@@ -999,10 +1104,12 @@
       document.getElementById('loginScreen').classList.remove('hidden');
       document.getElementById('boardArea').classList.add('hidden');
       document.getElementById('boardFooter').classList.add('hidden');
+      document.getElementById('verificationScreen').classList.add('hidden');
     }
 
     function showBoard() {
       document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('verificationScreen').classList.add('hidden');
       document.getElementById('boardArea').classList.remove('hidden');
       document.getElementById('boardFooter').classList.remove('hidden');
 
@@ -1038,13 +1145,326 @@
       if (currentRole === ROLES.CLINIC_MANAGER) {
         document.getElementById('adminPanel').classList.remove('hidden');
         document.getElementById('clinicPanel').classList.remove('hidden');
+        document.getElementById('verifyAdminPanel').classList.remove('hidden');
         resetClinicEmailBody();
+      }
+
+      // 마스터도 인증 관리 패널 표시
+      if (currentRole === ROLES.MASTER) {
+        document.getElementById('verifyAdminPanel').classList.remove('hidden');
       }
     }
 
     function hideLoading() {
       const overlay = document.getElementById('loadingOverlay');
       if (overlay) overlay.style.display = 'none';
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  📋 재학생 인증 시스템                                            ║
+    // ╚══════════════════════════════════════════════════════════════╝
+
+    // 인증 상태 확인: 'approved' | 'pending' | 'rejected' | 'none'
+    async function checkVerificationStatus(uid) {
+      try {
+        const doc = await db.collection('verifications').doc(uid).get();
+        if (!doc.exists) return 'none';
+        return doc.data().status || 'none';
+      } catch (e) {
+        console.warn('인증 상태 확인 실패:', e);
+        return 'none';
+      }
+    }
+
+    // 인증 화면 표시
+    function showVerificationScreen(status) {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('boardArea').classList.add('hidden');
+      document.getElementById('boardFooter').classList.add('hidden');
+      document.getElementById('verificationScreen').classList.remove('hidden');
+
+      // 사용자 정보
+      document.getElementById('verifyAvatar').src = currentUser.photoURL || '';
+      document.getElementById('verifyName').textContent = currentUser.displayName || '사용자';
+      document.getElementById('verifyEmail').textContent = currentUser.email;
+
+      if (status === 'pending') {
+        document.getElementById('verifyUploadArea').style.display = 'none';
+        document.getElementById('verifyPendingArea').style.display = 'block';
+      } else {
+        document.getElementById('verifyUploadArea').style.display = 'block';
+        document.getElementById('verifyPendingArea').style.display = 'none';
+        // 반려된 경우 사유 표시
+        if (status === 'rejected') {
+          db.collection('verifications').doc(currentUser.uid).get().then(doc => {
+            if (doc.exists && doc.data().rejectReason) {
+              document.getElementById('verifyRejectMsg').style.display = 'block';
+              document.getElementById('verifyRejectReason').textContent = doc.data().rejectReason;
+            }
+          });
+        }
+      }
+      hideLoading();
+    }
+
+    // 파일 미리보기
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('verifyFileInput');
+      if (fileInput) {
+        fileInput.addEventListener('change', function() {
+          const file = this.files[0];
+          if (!file) return;
+          if (file.size > 5 * 1024 * 1024) {
+            showToast('파일 크기가 5MB를 초과합니다.', 'error');
+            this.value = '';
+            return;
+          }
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = e => {
+              document.getElementById('verifyPreview').style.display = 'block';
+              document.getElementById('verifyPreviewImg').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            document.getElementById('verifyPreview').style.display = 'none';
+          }
+        });
+      }
+    });
+
+    // 이미지 리사이즈 (Firestore 1MB 문서 제한 대응)
+    function resizeImage(file, maxWidth) {
+      return new Promise((resolve) => {
+        if (!file.type.startsWith('image/')) {
+          // PDF 등은 그대로 base64
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.readAsDataURL(file);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            if (w > maxWidth) { h = h * maxWidth / w; w = maxWidth; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 인증 요청 제출
+    async function submitVerification() {
+      const fileInput = document.getElementById('verifyFileInput');
+      if (!fileInput.files[0]) {
+        showToast('인증 서류를 업로드해 주세요.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('verifySubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> 제출 중...';
+
+      try {
+        const file = fileInput.files[0];
+        const fileData = await resizeImage(file, 1200);
+
+        // base64 크기 체크 (~700KB 이하만 Firestore에 저장 가능)
+        if (fileData.length > 900000) {
+          showToast('파일이 너무 큽니다. 더 작은 이미지를 사용해 주세요.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = '인증 요청 제출하기';
+          return;
+        }
+
+        await db.collection('verifications').doc(currentUser.uid).set({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName || '',
+          photoURL: currentUser.photoURL || '',
+          fileData: fileData,
+          fileName: file.name,
+          fileType: file.type,
+          status: 'pending',
+          submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          reviewedAt: null,
+          reviewedBy: null,
+          rejectReason: null
+        });
+
+        // 관리자에게 알림
+        sendNotification({
+          type: 'verification_request',
+          notifyEmails: [...CLINIC_MANAGER_EMAILS, ...MASTER_EMAILS],
+          studentName: currentUser.displayName || '(이름 없음)',
+          studentEmail: currentUser.email,
+          boardUrl: BOARD_URL
+        });
+
+        showToast('인증 요청이 제출되었습니다. 관리자 승인을 기다려 주세요.', 'success');
+        showVerificationScreen('pending');
+      } catch (err) {
+        console.error('인증 제출 실패:', err);
+        showToast('인증 제출에 실패했습니다: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '인증 요청 제출하기';
+      }
+    }
+
+    // ─── 관리자: 인증 요청 목록 로드 ───
+    async function loadVerificationRequests() {
+      const container = document.getElementById('verifyRequestList');
+      if (!container) return;
+
+      try {
+        const snap = await db.collection('verifications')
+          .orderBy('submittedAt', 'desc')
+          .get();
+
+        if (snap.empty) {
+          container.innerHTML = '<p style="font-size:13px;color:var(--light-text);">인증 요청이 없습니다.</p>';
+          return;
+        }
+
+        // 대기 중 / 승인됨 / 반려 분리
+        const pending = [], approved = [], rejected = [];
+        snap.forEach(doc => {
+          const d = { id: doc.id, ...doc.data() };
+          if (d.status === 'pending') pending.push(d);
+          else if (d.status === 'approved') approved.push(d);
+          else rejected.push(d);
+        });
+
+        let html = '';
+
+        // 대기 중 (상단에 강조)
+        if (pending.length > 0) {
+          html += `<div style="margin-bottom:16px;">
+            <h4 style="font-size:14px;font-weight:700;color:#E65100;margin-bottom:10px;">
+              ⏳ 대기 중 (${pending.length}건)
+            </h4>`;
+          pending.forEach(v => {
+            html += renderVerifyCard(v, true);
+          });
+          html += '</div>';
+        }
+
+        // 승인됨
+        if (approved.length > 0) {
+          html += `<details style="margin-bottom:12px;">
+            <summary style="font-size:13px;font-weight:600;color:#2E7D32;cursor:pointer;margin-bottom:8px;">
+              ✅ 승인됨 (${approved.length}명)
+            </summary>`;
+          approved.forEach(v => {
+            html += renderVerifyCard(v, false);
+          });
+          html += '</details>';
+        }
+
+        // 반려
+        if (rejected.length > 0) {
+          html += `<details style="margin-bottom:12px;">
+            <summary style="font-size:13px;font-weight:600;color:#C62828;cursor:pointer;margin-bottom:8px;">
+              ❌ 반려됨 (${rejected.length}건)
+            </summary>`;
+          rejected.forEach(v => {
+            html += renderVerifyCard(v, false);
+          });
+          html += '</details>';
+        }
+
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('인증 요청 로드 실패:', err);
+        container.innerHTML = '<p style="font-size:13px;color:#C62828;">인증 요청을 불러올 수 없습니다.</p>';
+      }
+    }
+
+    function renderVerifyCard(v, showActions) {
+      const time = v.submittedAt ? new Date(v.submittedAt.seconds * 1000).toLocaleString('ko-KR') : '';
+      const statusColors = { pending: '#FFF8E1', approved: '#E8F5E9', rejected: '#FFEBEE' };
+      const bg = statusColors[v.status] || '#F5F5F5';
+
+      let actionsHtml = '';
+      if (showActions) {
+        actionsHtml = `
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button onclick="approveVerification('${v.id}')" 
+              style="flex:1;padding:8px;border:none;border-radius:6px;background:#2E7D32;color:white;font-size:12px;font-weight:600;cursor:pointer;">
+              ✓ 승인
+            </button>
+            <button onclick="rejectVerification('${v.id}')" 
+              style="flex:1;padding:8px;border:none;border-radius:6px;background:#C62828;color:white;font-size:12px;font-weight:600;cursor:pointer;">
+              ✗ 반려
+            </button>
+          </div>`;
+      }
+
+      let filePreview = '';
+      if (v.fileData) {
+        if (v.fileData.startsWith('data:image')) {
+          filePreview = `<img src="${v.fileData}" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid #ddd;margin-top:8px;cursor:pointer;" onclick="window.open(this.src,'_blank')">`;
+        } else {
+          filePreview = `<a href="${v.fileData}" download="${v.fileName || 'document.pdf'}" style="display:inline-block;margin-top:8px;font-size:12px;color:var(--rose-gold-primary);text-decoration:underline;">📎 ${v.fileName || '첨부파일'} 다운로드</a>`;
+        }
+      }
+
+      return `
+        <div style="background:${bg};border-radius:8px;padding:14px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <img src="${v.photoURL || ''}" style="width:32px;height:32px;border-radius:50%;background:#ddd;">
+            <div>
+              <strong style="font-size:13px;">${v.displayName || '(이름 없음)'}</strong>
+              <span style="font-size:11px;color:var(--light-text);display:block;">${v.email}</span>
+            </div>
+            <span style="font-size:11px;color:var(--light-text);margin-left:auto;">${time}</span>
+          </div>
+          ${filePreview}
+          ${actionsHtml}
+        </div>`;
+    }
+
+    // 승인
+    async function approveVerification(uid) {
+      if (!confirm('이 학생의 재학 인증을 승인하시겠습니까?')) return;
+      try {
+        await db.collection('verifications').doc(uid).update({
+          status: 'approved',
+          reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          reviewedBy: currentUser.email
+        });
+        showToast('재학 인증이 승인되었습니다.', 'success');
+        await loadVerificationRequests();
+      } catch (err) {
+        console.error('승인 실패:', err);
+        showToast('승인에 실패했습니다: ' + err.message, 'error');
+      }
+    }
+
+    // 반려
+    async function rejectVerification(uid) {
+      const reason = prompt('반려 사유를 입력해 주세요 (학생에게 표시됩니다):');
+      if (reason === null) return;
+      try {
+        await db.collection('verifications').doc(uid).update({
+          status: 'rejected',
+          rejectReason: reason || '제출된 서류가 부적합합니다. 다시 제출해 주세요.',
+          reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          reviewedBy: currentUser.email
+        });
+        showToast('인증 요청이 반려되었습니다.', 'success');
+        await loadVerificationRequests();
+      } catch (err) {
+        console.error('반려 실패:', err);
+        showToast('반려에 실패했습니다: ' + err.message, 'error');
+      }
     }
 
     // ╔══════════════════════════════════════════════════════════════╗
@@ -1120,7 +1540,7 @@
             await ref.set({
               masters: MASTER_EMAILS,
               lawyers: [email],
-              clinic_managers: ['lclin@sookmyung.ac.kr', 'lawi@sookmyung.ac.kr'],
+              clinic_managers: ['lclin@sookmyung.ac.kr'],
               blocked: BLOCKED_EMAILS,
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -1506,14 +1926,15 @@
         closeModal('writeModal');
         showToast(isNoticeMode ? '공지사항이 등록되었습니다.' : '상담이 성공적으로 신청되었습니다.', 'success');
 
-        // 📧 새 상담 등록 → 클리닉 매니저에게 알림 (공지사항은 제외)
+        // 📧 새 상담 등록 → 클리닉 매니저 + 마스터 관리자에게 알림 (공지사항은 제외)
         if (!isNoticeMode) {
           sendNotification({
             type: 'new_consultation',
             studentName: currentUser.displayName || currentUser.email,
             postTitle: title,
             category: category,
-            boardUrl: BOARD_URL
+            boardUrl: BOARD_URL,
+            notifyEmails: [...CLINIC_MANAGER_EMAILS, ...MASTER_EMAILS]
           });
         }
 
@@ -1687,10 +2108,8 @@
         }
 
         // 삭제 버튼 (마스터 또는 공지사항 작성자)
-        // ★ 임시 삭제 권한: lawi@sookmyung.ac.kr — 테스트 완료 후 아래 조건에서 tempDelete 줄 제거
         let deleteHTML = '';
-        const tempDelete = currentUser.email.toLowerCase() === 'lawi@sookmyung.ac.kr'; // ← 임시 (삭제 예정)
-        if (currentRole === ROLES.MASTER || tempDelete || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
+        if (currentRole === ROLES.MASTER || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
           deleteHTML = `
             <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
               onclick="deletePost('${postId}')">게시물 삭제</button>
@@ -2002,9 +2421,7 @@
 
     async function deletePost(postId) {
       const post = allPosts.find(p => p.id === postId);
-      // ★ 임시 삭제 권한: lawi@sookmyung.ac.kr — 테스트 완료 후 tempDelete 줄 제거
-      const tempDelete = currentUser.email.toLowerCase() === 'lawi@sookmyung.ac.kr'; // ← 임시 (삭제 예정)
-      const canDelete = currentRole === ROLES.MASTER || tempDelete ||
+      const canDelete = currentRole === ROLES.MASTER || 
         (currentRole === ROLES.CLINIC_MANAGER && post && post.isNotice && post.authorEmail === currentUser.email.toLowerCase());
       if (!canDelete) return;
       if (!confirm('이 게시물을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
