@@ -296,10 +296,12 @@
       background: var(--rose-gold-lighter); color: var(--rose-gold-dark); border: 1px solid var(--rose-gold-light);
     }
     .lawyer-chip .remove-btn {
-      width: 18px; height: 18px; border-radius: 50%; border: none;
-      background: rgba(123,63,63,.12); color: var(--rose-gold-dark); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      width: 20px; height: 20px; border-radius: 50%; border: none;
+      background: rgba(123,63,63,.1); color: var(--rose-gold-dark); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 11px;
+      transition: all .2s;
     }
+    .lawyer-chip .remove-btn:hover { background: rgba(123,63,63,.25); }
     .add-lawyer-row { display: flex; gap: 8px; }
     .add-lawyer-row input {
       flex: 1; padding: 10px 14px; border: 1.5px solid var(--rose-gold-light);
@@ -497,9 +499,9 @@
             법률상담 게시판을 이용하려면 <strong>재학생 인증</strong>이 필요합니다.<br>
             아래 서류 중 하나를 촬영 또는 캡처하여 업로드해 주세요.
           </p>
-          <div id="verifyRejectMsg" style="display:none;background:#FFEBEE;border:1px solid #EF9A9A;border-radius:8px;padding:14px;margin-bottom:16px;text-align:left;">
-            <p style="font-size:13px;color:#C62828;font-weight:600;margin:0 0 4px 0;">인증이 반려되었습니다</p>
-            <p id="verifyRejectReason" style="font-size:13px;color:#5C4444;margin:0;"></p>
+          <div id="verifyRejectMsg" style="display:none;background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:8px;padding:14px;margin-bottom:16px;text-align:left;">
+            <p style="font-size:13px;color:var(--rose-gold-dark);font-weight:600;margin:0 0 4px 0;">인증이 반려되었습니다</p>
+            <p id="verifyRejectReason" style="font-size:13px;color:var(--medium-text);margin:0;"></p>
           </div>
           <div style="background:var(--rose-gold-lightest);border:1px solid var(--rose-gold-light);border-radius:8px;padding:16px;margin-bottom:20px;text-align:left;">
             <p style="font-size:13px;color:var(--dark-text);margin:0 0 8px 0;font-weight:700;">제출 가능 서류</p>
@@ -614,6 +616,19 @@
         <div class="add-lawyer-row">
           <input type="email" id="newLawyerEmail" placeholder="변호사 이메일 주소 (예: lawyer@gmail.com)" />
           <button class="btn-add-lawyer" onclick="addLawyer()">+ 변호사 등록</button>
+        </div>
+
+        <!-- 차단 사용자 관리 (마스터 전용) -->
+        <div id="blockedSection" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border-color);display:none;">
+          <h4 style="font-size:14px;font-weight:700;color:var(--dark-text);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            차단된 계정
+          </h4>
+          <div id="blockedList" class="lawyer-list" style="margin-bottom:10px;"></div>
+          <div class="add-lawyer-row">
+            <input type="email" id="newBlockedEmail" placeholder="차단할 이메일 주소" />
+            <button class="btn-add-lawyer" style="background:var(--rose-gold-dark);" onclick="addBlocked()">+ 차단 추가</button>
+          </div>
         </div>
       </div>
 
@@ -864,6 +879,7 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/user.organization.read');
 
     // ╔══════════════════════════════════════════════════════════════╗
     // ║  🔐 역할 정의 (Role-Based Access Control)                      ║
@@ -981,7 +997,15 @@
             await loadLawyers();
             await loadPosts();
           } else {
-            showVerificationScreen(vStatus);
+            // Google People API로 직책(재학/휴학) 자동 확인 시도
+            const autoVerified = await tryAutoVerify(user);
+            if (autoVerified) {
+              showBoard();
+              await loadLawyers();
+              await loadPosts();
+            } else {
+              showVerificationScreen(vStatus);
+            }
           }
         } else {
           showBoard();
@@ -1000,11 +1024,26 @@
       hideLoading();
     });
 
+    let googleAccessToken = null;
+
+    // 페이지 로드 시 리다이렉트 결과에서 토큰 복구 시도
+    auth.getRedirectResult().then(result => {
+      if (result && result.credential) {
+        googleAccessToken = result.credential.accessToken;
+      }
+    }).catch(() => {});
+
     async function handleLogin() {
       try {
         document.getElementById('btnGoogleLogin').disabled = true;
         document.getElementById('btnGoogleLogin').innerHTML = '<div class="spinner"></div> 로그인 중...';
-        await auth.signInWithPopup(provider);
+        const result = await auth.signInWithPopup(provider);
+        // OAuth access token 저장 (People API 호출용)
+        if (result.credential) {
+          googleAccessToken = result.credential.accessToken;
+          // sessionStorage에 저장 (새로고침 대비)
+          try { sessionStorage.setItem('gat', googleAccessToken); } catch(e) {}
+        }
       } catch (err) {
         console.error('Login error:', err);
         showToast('로그인에 실패했습니다: ' + err.message, 'error');
@@ -1140,6 +1179,8 @@
       // 마스터: 관리자 패널 표시
       if (currentRole === ROLES.MASTER) {
         document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('blockedSection').style.display = 'block';
+        loadBlockedUsers();
       }
 
       // 클리닉 매니저: 관리자 패널(변호사 등록) + 이메일 패널 표시
@@ -1174,6 +1215,63 @@
       } catch (e) {
         console.warn('인증 상태 확인 실패:', e);
         return 'none';
+      }
+    }
+
+    // Google People API로 조직 정보(직책) 확인 → 자동 인증
+    async function tryAutoVerify(user) {
+      // sessionStorage 복구 시도
+      if (!googleAccessToken) {
+        try { googleAccessToken = sessionStorage.getItem('gat'); } catch(e) {}
+      }
+      if (!googleAccessToken) return false;
+
+      try {
+        const resp = await fetch(
+          'https://people.googleapis.com/v1/people/me?personFields=organizations',
+          { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
+        );
+
+        if (!resp.ok) {
+          console.warn('People API 호출 실패:', resp.status);
+          return false;
+        }
+
+        const data = await resp.json();
+        const orgs = data.organizations || [];
+
+        // 직책(title)에서 재학/휴학 확인
+        const activeStatuses = ['재학', '휴학'];
+        const isActive = orgs.some(org => 
+          activeStatuses.includes((org.title || '').trim())
+        );
+
+        if (isActive) {
+          // Firestore에 자동 인증 기록 저장
+          const orgInfo = orgs.find(org => activeStatuses.includes((org.title || '').trim()));
+          await db.collection('verifications').doc(user.uid).set({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || '',
+            status: 'approved',
+            method: 'google_workspace_auto',
+            orgTitle: orgInfo.title || '',
+            orgDepartment: orgInfo.department || '',
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            reviewedBy: 'system (Google Workspace 자동 인증)'
+          });
+
+          showToast('재학생 인증이 자동으로 완료되었습니다. (' + orgInfo.title + ')', 'success');
+          return true;
+        }
+
+        console.log('Google Workspace 직책:', orgs.map(o => o.title).join(', ') || '(없음)');
+        return false;
+      } catch (e) {
+        console.warn('자동 인증 실패 (수동 인증으로 전환):', e);
+        return false;
       }
     }
 
@@ -1348,8 +1446,8 @@
         // 대기 중 (상단에 강조)
         if (pending.length > 0) {
           html += `<div style="margin-bottom:16px;">
-            <h4 style="font-size:14px;font-weight:700;color:#E65100;margin-bottom:10px;">
-              ⏳ 대기 중 (${pending.length}건)
+            <h4 style="font-size:14px;font-weight:700;color:var(--rose-gold-dark);margin-bottom:10px;">
+              대기 중 (${pending.length}건)
             </h4>`;
           pending.forEach(v => {
             html += renderVerifyCard(v, true);
@@ -1360,8 +1458,8 @@
         // 승인됨
         if (approved.length > 0) {
           html += `<details style="margin-bottom:12px;">
-            <summary style="font-size:13px;font-weight:600;color:#2E7D32;cursor:pointer;margin-bottom:8px;">
-              ✅ 승인됨 (${approved.length}명)
+            <summary style="font-size:13px;font-weight:600;color:var(--rose-gold-primary);cursor:pointer;margin-bottom:8px;">
+              승인됨 (${approved.length}명)
             </summary>`;
           approved.forEach(v => {
             html += renderVerifyCard(v, false);
@@ -1372,8 +1470,8 @@
         // 반려
         if (rejected.length > 0) {
           html += `<details style="margin-bottom:12px;">
-            <summary style="font-size:13px;font-weight:600;color:#C62828;cursor:pointer;margin-bottom:8px;">
-              ❌ 반려됨 (${rejected.length}건)
+            <summary style="font-size:13px;font-weight:600;color:var(--light-text);cursor:pointer;margin-bottom:8px;">
+              반려됨 (${rejected.length}건)
             </summary>`;
           rejected.forEach(v => {
             html += renderVerifyCard(v, false);
@@ -1384,26 +1482,41 @@
         container.innerHTML = html;
       } catch (err) {
         console.error('인증 요청 로드 실패:', err);
-        container.innerHTML = '<p style="font-size:13px;color:#C62828;">인증 요청을 불러올 수 없습니다.</p>';
+        container.innerHTML = '<p style="font-size:13px;color:var(--rose-gold-dark);">인증 요청을 불러올 수 없습니다.</p>';
       }
     }
 
     function renderVerifyCard(v, showActions) {
       const time = v.submittedAt ? new Date(v.submittedAt.seconds * 1000).toLocaleString('ko-KR') : '';
-      const statusColors = { pending: '#FFF8E1', approved: '#E8F5E9', rejected: '#FFEBEE' };
-      const bg = statusColors[v.status] || '#F5F5F5';
+      const statusBg = { 
+        pending: 'linear-gradient(135deg,#FFF9F5,#FFF3EC)', 
+        approved: 'linear-gradient(135deg,#F9FAFB,#F0F5F0)', 
+        rejected: 'linear-gradient(135deg,#FFFBF9,#FFF0EE)' 
+      };
+      const bg = statusBg[v.status] || '#F5F5F5';
 
       let actionsHtml = '';
       if (showActions) {
         actionsHtml = `
-          <div style="display:flex;gap:8px;margin-top:10px;">
+          <div style="display:flex;gap:8px;margin-top:12px;">
             <button onclick="approveVerification('${v.id}')" 
-              style="flex:1;padding:8px;border:none;border-radius:6px;background:#2E7D32;color:white;font-size:12px;font-weight:600;cursor:pointer;">
-              ✓ 승인
+              style="flex:1;padding:9px 12px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--rose-gold-primary),var(--rose-gold-dark));color:white;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+              승인
             </button>
             <button onclick="rejectVerification('${v.id}')" 
-              style="flex:1;padding:8px;border:none;border-radius:6px;background:#C62828;color:white;font-size:12px;font-weight:600;cursor:pointer;">
-              ✗ 반려
+              style="flex:1;padding:9px 12px;border:1.5px solid var(--rose-gold-primary);border-radius:6px;background:white;color:var(--rose-gold-dark);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='var(--rose-gold-lightest)'" onmouseout="this.style.background='white'">
+              반려
+            </button>
+          </div>`;
+      }
+
+      // 승인된 카드에는 승인 취소 버튼
+      if (v.status === 'approved') {
+        actionsHtml = `
+          <div style="margin-top:10px;">
+            <button onclick="revokeVerification('${v.id}')" 
+              style="padding:7px 16px;border:1.5px solid var(--rose-gold-light);border-radius:6px;background:white;color:var(--rose-gold-dark);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" onmouseout="this.style.background='white';this.style.borderColor='var(--rose-gold-light)'">
+              승인 취소
             </button>
           </div>`;
       }
@@ -1411,18 +1524,18 @@
       let filePreview = '';
       if (v.fileData) {
         if (v.fileData.startsWith('data:image')) {
-          filePreview = `<img src="${v.fileData}" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid #ddd;margin-top:8px;cursor:pointer;" onclick="window.open(this.src,'_blank')">`;
+          filePreview = `<img src="${v.fileData}" style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border-color);margin-top:8px;cursor:pointer;" onclick="openImageViewer(this.src)">`;
         } else {
           filePreview = `<a href="${v.fileData}" download="${v.fileName || 'document.pdf'}" style="display:inline-block;margin-top:8px;font-size:12px;color:var(--rose-gold-primary);text-decoration:underline;">📎 ${v.fileName || '첨부파일'} 다운로드</a>`;
         }
       }
 
       return `
-        <div style="background:${bg};border-radius:8px;padding:14px;margin-bottom:8px;">
+        <div style="background:${bg};border-radius:10px;padding:16px;margin-bottom:8px;border:1px solid rgba(156,92,92,0.06);">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
             <img src="${v.photoURL || ''}" style="width:32px;height:32px;border-radius:50%;background:#ddd;">
             <div>
-              <strong style="font-size:13px;">${v.displayName || '(이름 없음)'}</strong>
+              <strong style="font-size:13px;color:var(--dark-text);">${v.displayName || '(이름 없음)'}</strong>
               <span style="font-size:11px;color:var(--light-text);display:block;">${v.email}</span>
             </div>
             <span style="font-size:11px;color:var(--light-text);margin-left:auto;">${time}</span>
@@ -1430,6 +1543,25 @@
           ${filePreview}
           ${actionsHtml}
         </div>`;
+    }
+
+    // 이미지 뷰어 (base64 이미지 확대 표시)
+    function openImageViewer(src) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:20px;';
+      overlay.onclick = () => overlay.remove();
+
+      const img = document.createElement('img');
+      img.src = src;
+      img.style.cssText = 'max-width:95%;max-height:95%;border-radius:8px;box-shadow:0 4px 40px rgba(0,0,0,0.5);object-fit:contain;';
+
+      const closeBtn = document.createElement('div');
+      closeBtn.innerHTML = '✕';
+      closeBtn.style.cssText = 'position:fixed;top:20px;right:24px;color:white;font-size:28px;cursor:pointer;z-index:10001;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,0.15);';
+
+      overlay.appendChild(img);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
     }
 
     // 승인
@@ -1465,6 +1597,19 @@
       } catch (err) {
         console.error('반려 실패:', err);
         showToast('반려에 실패했습니다: ' + err.message, 'error');
+      }
+    }
+
+    // 승인 취소 (삭제)
+    async function revokeVerification(uid) {
+      if (!confirm('이 학생의 재학 인증을 취소하시겠습니까?\n취소 후 학생은 게시판을 이용할 수 없게 됩니다.')) return;
+      try {
+        await db.collection('verifications').doc(uid).delete();
+        showToast('재학 인증이 취소되었습니다.', 'success');
+        await loadVerificationRequests();
+      } catch (err) {
+        console.error('인증 취소 실패:', err);
+        showToast('인증 취소에 실패했습니다: ' + err.message, 'error');
       }
     }
 
@@ -1581,6 +1726,81 @@
         showToast('변호사가 제거되었습니다.', 'info');
       } catch (e) {
         showToast('제거 실패: ' + e.message, 'error');
+      }
+    }
+
+    // ╔══════════════════════════════════════════════════════════════╗
+    // ║  🚫 차단 사용자 관리 (마스터 전용)                                     ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    let blockedEmails = [...BLOCKED_EMAILS];
+
+    async function loadBlockedUsers() {
+      try {
+        const doc = await db.collection('roles').doc('config').get();
+        if (doc.exists && doc.data().blocked) {
+          blockedEmails = doc.data().blocked;
+        }
+        renderBlockedList();
+      } catch (e) {
+        renderBlockedList();
+      }
+    }
+
+    function renderBlockedList() {
+      const container = document.getElementById('blockedList');
+      if (!container) return;
+      if (blockedEmails.length === 0) {
+        container.innerHTML = '<p style="font-size:13px;color:var(--light-text);">차단된 계정이 없습니다.</p>';
+        return;
+      }
+      container.innerHTML = blockedEmails.map((email, i) => `
+        <div class="lawyer-chip" style="background:#FFF5F3;border-color:var(--rose-gold-light);">
+          ${email}
+          <button class="remove-btn" onclick="removeBlocked(${i})" title="차단 해제">✕</button>
+        </div>
+      `).join('');
+    }
+
+    async function addBlocked() {
+      if (currentRole !== ROLES.MASTER) return;
+      const input = document.getElementById('newBlockedEmail');
+      const email = input.value.trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        showToast('올바른 이메일 주소를 입력해 주세요.', 'error');
+        return;
+      }
+      if (blockedEmails.includes(email)) {
+        showToast('이미 차단된 계정입니다.', 'error');
+        return;
+      }
+      try {
+        await db.collection('roles').doc('config').update({
+          blocked: firebase.firestore.FieldValue.arrayUnion(email),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        blockedEmails.push(email);
+        renderBlockedList();
+        input.value = '';
+        showToast(`${email} 계정이 차단되었습니다.`, 'success');
+      } catch (e) {
+        showToast('차단 추가 실패: ' + e.message, 'error');
+      }
+    }
+
+    async function removeBlocked(index) {
+      if (currentRole !== ROLES.MASTER) return;
+      const email = blockedEmails[index];
+      if (!confirm(`${email} 차단을 해제하시겠습니까?`)) return;
+      try {
+        await db.collection('roles').doc('config').update({
+          blocked: firebase.firestore.FieldValue.arrayRemove(email),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        blockedEmails.splice(index, 1);
+        renderBlockedList();
+        showToast('차단이 해제되었습니다.', 'info');
+      } catch (e) {
+        showToast('차단 해제 실패: ' + e.message, 'error');
       }
     }
 
@@ -1777,9 +1997,9 @@
 
       body.innerHTML = paginated.map((post, i) => {
         const isNotice = post.isNotice;
-        const num = isNotice ? '<span style="font-size:11px;font-weight:700;color:var(--rose-gold-primary);">공지</span>' : (sorted.length - notices.length - (start + i - (start < notices.length ? 0 : notices.length)) + (start >= notices.length ? 0 : 0));
-        const realIdx = sorted.indexOf(post);
-        const displayNum = isNotice ? '<span style="font-size:11px;font-weight:700;color:var(--rose-gold-primary);">공지</span>' : (regular.length - regular.indexOf(post));
+        const displayNum = isNotice 
+          ? '<span style="font-size:11px;font-weight:700;color:var(--rose-gold-primary);">공지</span>' 
+          : (regular.length - regular.indexOf(post));
         const date = post.createdAt ? formatDate(post.createdAt) : '-';
         const statusHTML = getStatusBadge(post.status);
         const lawyerHTML = isNotice
@@ -1978,11 +2198,12 @@
         }
 
         if (canReadContent) {
+          var editHistory = [];
           try {
             const contentDoc = await db.collection('consultation_contents').doc(postId).get();
             if (contentDoc.exists) {
               contentBody = contentDoc.data().body || '';
-              var editHistory = contentDoc.data().editHistory || [];
+              editHistory = contentDoc.data().editHistory || [];
             }
           } catch (e) {
             contentBody = '내용을 불러올 수 없습니다 (권한 부족).';
@@ -2112,7 +2333,9 @@
         let deleteHTML = '';
         if (currentRole === ROLES.MASTER || (post.isNotice && post.authorEmail === currentUser.email.toLowerCase())) {
           deleteHTML = `
-            <button style="background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;" 
+            <button style="background:white;color:var(--rose-gold-dark);border:1.5px solid var(--rose-gold-light);padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;transition:all .2s;" 
+              onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" 
+              onmouseout="this.style.background='white';this.style.borderColor='var(--rose-gold-light)'"
               onclick="deletePost('${postId}')">게시물 삭제</button>
           `;
         }
