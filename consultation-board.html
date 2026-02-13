@@ -624,10 +624,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose-gold-primary)" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             차단된 계정
           </h4>
-          <div id="blockedList" class="lawyer-list" style="margin-bottom:10px;"></div>
-          <div class="add-lawyer-row">
-            <input type="email" id="newBlockedEmail" placeholder="차단할 이메일 주소" />
-            <button class="btn-add-lawyer" style="background:var(--rose-gold-dark);" onclick="addBlocked()">+ 차단 추가</button>
+          <div id="blockedList" style="margin-bottom:10px;"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input type="email" id="newBlockedEmail" placeholder="차단할 이메일 주소" style="flex:1;min-width:180px;padding:10px 14px;border:1.5px solid var(--rose-gold-light);border-radius:4px;font-size:13px;font-family:inherit;" />
+            <input type="text" id="newBlockedReason" placeholder="차단 사유 (선택)" style="flex:1;min-width:140px;padding:10px 14px;border:1.5px solid var(--rose-gold-light);border-radius:4px;font-size:13px;font-family:inherit;" />
+            <button class="btn-add-lawyer" style="background:var(--rose-gold-dark);" onclick="addBlocked()">+ 차단</button>
           </div>
         </div>
       </div>
@@ -1450,21 +1451,47 @@
               대기 중 (${pending.length}건)
             </h4>`;
           pending.forEach(v => {
-            html += renderVerifyCard(v, true);
+            html += renderVerifyCard(v, 'pending');
           });
           html += '</div>';
         }
 
-        // 승인됨
+        // 승인됨 — 리스트 형태
         if (approved.length > 0) {
-          html += `<details style="margin-bottom:12px;">
-            <summary style="font-size:13px;font-weight:600;color:var(--rose-gold-primary);cursor:pointer;margin-bottom:8px;">
+          html += `<div style="margin-bottom:16px;">
+            <h4 style="font-size:14px;font-weight:700;color:var(--rose-gold-primary);margin-bottom:10px;">
               승인됨 (${approved.length}명)
-            </summary>`;
-          approved.forEach(v => {
-            html += renderVerifyCard(v, false);
+            </h4>
+            <div style="background:var(--rose-gold-lightest);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;">`;
+          approved.forEach((v, i) => {
+            const borderBottom = i < approved.length - 1 ? 'border-bottom:1px solid var(--border-color);' : '';
+            const statusTag = v.orgTitle || v.userStatus || '';
+            const statusHTML = statusTag 
+              ? `<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;background:var(--rose-gold-lighter);color:var(--rose-gold-dark);margin-left:6px;">${escapeHTML(statusTag)}</span>` 
+              : '';
+            const dept = v.orgDepartment || '';
+            const deptHTML = dept ? `<span style="font-size:11px;color:var(--light-text);margin-left:4px;">${escapeHTML(dept)}</span>` : '';
+            const method = v.method === 'google_workspace_auto' ? '자동' : '수동';
+            const time = v.reviewedAt ? new Date(v.reviewedAt.seconds * 1000).toLocaleDateString('ko-KR') : '';
+
+            html += `
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;${borderBottom}">
+                <img src="${v.photoURL || ''}" style="width:28px;height:28px;border-radius:50%;background:#eee;flex-shrink:0;">
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;flex-wrap:wrap;">
+                    <strong style="font-size:13px;color:var(--dark-text);">${escapeHTML(v.displayName || '(이름 없음)')}</strong>
+                    ${statusHTML}${deptHTML}
+                  </div>
+                  <span style="font-size:11px;color:var(--light-text);">${v.email}</span>
+                </div>
+                <span style="font-size:10px;color:var(--light-text);white-space:nowrap;">${method} · ${time}</span>
+                <button onclick="revokeVerification('${v.id}')" title="승인 취소"
+                  style="width:24px;height:24px;border-radius:50%;border:1px solid var(--rose-gold-light);background:white;color:var(--rose-gold-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s;"
+                  onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" 
+                  onmouseout="this.style.background='white';this.style.borderColor='var(--rose-gold-light)'">✕</button>
+              </div>`;
           });
-          html += '</details>';
+          html += '</div></div>';
         }
 
         // 반려
@@ -1474,7 +1501,7 @@
               반려됨 (${rejected.length}건)
             </summary>`;
           rejected.forEach(v => {
-            html += renderVerifyCard(v, false);
+            html += renderVerifyCard(v, 'rejected');
           });
           html += '</details>';
         }
@@ -1486,17 +1513,24 @@
       }
     }
 
-    function renderVerifyCard(v, showActions) {
+    function renderVerifyCard(v, mode) {
       const time = v.submittedAt ? new Date(v.submittedAt.seconds * 1000).toLocaleString('ko-KR') : '';
       const statusBg = { 
         pending: 'linear-gradient(135deg,#FFF9F5,#FFF3EC)', 
-        approved: 'linear-gradient(135deg,#F9FAFB,#F0F5F0)', 
         rejected: 'linear-gradient(135deg,#FFFBF9,#FFF0EE)' 
       };
       const bg = statusBg[v.status] || '#F5F5F5';
 
+      // 상태 태그 (재학/휴학/교직원/교수 등)
+      const statusTag = v.orgTitle || v.userStatus || '';
+      const statusTagHTML = statusTag 
+        ? `<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;background:var(--rose-gold-lighter);color:var(--rose-gold-dark);margin-left:6px;">${escapeHTML(statusTag)}</span>` 
+        : '';
+      const dept = v.orgDepartment || '';
+      const deptHTML = dept ? `<span style="font-size:11px;color:var(--light-text);margin-left:4px;">${escapeHTML(dept)}</span>` : '';
+
       let actionsHtml = '';
-      if (showActions) {
+      if (mode === 'pending') {
         actionsHtml = `
           <div style="display:flex;gap:8px;margin-top:12px;">
             <button onclick="approveVerification('${v.id}')" 
@@ -1510,17 +1544,6 @@
           </div>`;
       }
 
-      // 승인된 카드에는 승인 취소 버튼
-      if (v.status === 'approved') {
-        actionsHtml = `
-          <div style="margin-top:10px;">
-            <button onclick="revokeVerification('${v.id}')" 
-              style="padding:7px 16px;border:1.5px solid var(--rose-gold-light);border-radius:6px;background:white;color:var(--rose-gold-dark);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" onmouseout="this.style.background='white';this.style.borderColor='var(--rose-gold-light)'">
-              승인 취소
-            </button>
-          </div>`;
-      }
-
       let filePreview = '';
       if (v.fileData) {
         if (v.fileData.startsWith('data:image')) {
@@ -1530,17 +1553,27 @@
         }
       }
 
+      // 반려 사유 표시
+      let rejectInfo = '';
+      if (v.status === 'rejected' && v.rejectReason) {
+        rejectInfo = `<p style="font-size:12px;color:var(--rose-gold-dark);margin-top:6px;padding:8px 10px;background:var(--rose-gold-lightest);border-radius:4px;">반려 사유: ${escapeHTML(v.rejectReason)}</p>`;
+      }
+
       return `
         <div style="background:${bg};border-radius:10px;padding:16px;margin-bottom:8px;border:1px solid rgba(156,92,92,0.06);">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
             <img src="${v.photoURL || ''}" style="width:32px;height:32px;border-radius:50%;background:#ddd;">
             <div>
-              <strong style="font-size:13px;color:var(--dark-text);">${v.displayName || '(이름 없음)'}</strong>
-              <span style="font-size:11px;color:var(--light-text);display:block;">${v.email}</span>
+              <div style="display:flex;align-items:center;flex-wrap:wrap;">
+                <strong style="font-size:13px;color:var(--dark-text);">${v.displayName || '(이름 없음)'}</strong>
+                ${statusTagHTML}${deptHTML}
+              </div>
+              <span style="font-size:11px;color:var(--light-text);">${v.email}</span>
             </div>
             <span style="font-size:11px;color:var(--light-text);margin-left:auto;">${time}</span>
           </div>
           ${filePreview}
+          ${rejectInfo}
           ${actionsHtml}
         </div>`;
     }
@@ -1566,10 +1599,12 @@
 
     // 승인
     async function approveVerification(uid) {
-      if (!confirm('이 학생의 재학 인증을 승인하시겠습니까?')) return;
+      const status = prompt('학생 상태를 입력해 주세요:\n(예: 재학, 휴학, 수료 등)');
+      if (status === null) return;
       try {
         await db.collection('verifications').doc(uid).update({
           status: 'approved',
+          userStatus: status.trim() || '재학',
           reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
           reviewedBy: currentUser.email
         });
@@ -1733,12 +1768,14 @@
     // ║  🚫 차단 사용자 관리 (마스터 전용)                                     ║
     // ╚══════════════════════════════════════════════════════════════╝
     let blockedEmails = [...BLOCKED_EMAILS];
+    let blockedReasons = {};
 
     async function loadBlockedUsers() {
       try {
         const doc = await db.collection('roles').doc('config').get();
-        if (doc.exists && doc.data().blocked) {
-          blockedEmails = doc.data().blocked;
+        if (doc.exists) {
+          if (doc.data().blocked) blockedEmails = doc.data().blocked;
+          if (doc.data().blockedReasons) blockedReasons = doc.data().blockedReasons;
         }
         renderBlockedList();
       } catch (e) {
@@ -1753,18 +1790,30 @@
         container.innerHTML = '<p style="font-size:13px;color:var(--light-text);">차단된 계정이 없습니다.</p>';
         return;
       }
-      container.innerHTML = blockedEmails.map((email, i) => `
-        <div class="lawyer-chip" style="background:#FFF5F3;border-color:var(--rose-gold-light);">
-          ${email}
-          <button class="remove-btn" onclick="removeBlocked(${i})" title="차단 해제">✕</button>
-        </div>
-      `).join('');
+      container.innerHTML = `<div style="background:var(--rose-gold-lightest);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;">` +
+        blockedEmails.map((email, i) => {
+          const reason = blockedReasons[email] || '';
+          const borderBottom = i < blockedEmails.length - 1 ? 'border-bottom:1px solid var(--border-color);' : '';
+          return `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;${borderBottom}">
+              <div style="flex:1;min-width:0;">
+                <span style="font-size:13px;font-weight:600;color:var(--dark-text);">${email}</span>
+                ${reason ? `<span style="font-size:11px;color:var(--light-text);margin-left:8px;">— ${escapeHTML(reason)}</span>` : ''}
+              </div>
+              <button onclick="removeBlocked(${i})" title="차단 해제"
+                style="width:24px;height:24px;border-radius:50%;border:1px solid var(--rose-gold-light);background:white;color:var(--rose-gold-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s;"
+                onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" 
+                onmouseout="this.style.background='white';this.style.borderColor='var(--rose-gold-light)'">✕</button>
+            </div>`;
+        }).join('') + '</div>';
     }
 
     async function addBlocked() {
       if (currentRole !== ROLES.MASTER) return;
       const input = document.getElementById('newBlockedEmail');
+      const reasonInput = document.getElementById('newBlockedReason');
       const email = input.value.trim().toLowerCase();
+      const reason = reasonInput ? reasonInput.value.trim() : '';
       if (!email || !email.includes('@')) {
         showToast('올바른 이메일 주소를 입력해 주세요.', 'error');
         return;
@@ -1774,15 +1823,20 @@
         return;
       }
       try {
+        blockedEmails.push(email);
+        if (reason) blockedReasons[email] = reason;
         await db.collection('roles').doc('config').update({
-          blocked: firebase.firestore.FieldValue.arrayUnion(email),
+          blocked: blockedEmails,
+          blockedReasons: blockedReasons,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        blockedEmails.push(email);
         renderBlockedList();
         input.value = '';
+        if (reasonInput) reasonInput.value = '';
         showToast(`${email} 계정이 차단되었습니다.`, 'success');
       } catch (e) {
+        blockedEmails.pop();
+        delete blockedReasons[email];
         showToast('차단 추가 실패: ' + e.message, 'error');
       }
     }
@@ -1792,11 +1846,13 @@
       const email = blockedEmails[index];
       if (!confirm(`${email} 차단을 해제하시겠습니까?`)) return;
       try {
+        blockedEmails.splice(index, 1);
+        delete blockedReasons[email];
         await db.collection('roles').doc('config').update({
-          blocked: firebase.firestore.FieldValue.arrayRemove(email),
+          blocked: blockedEmails,
+          blockedReasons: blockedReasons,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        blockedEmails.splice(index, 1);
         renderBlockedList();
         showToast('차단이 해제되었습니다.', 'info');
       } catch (e) {
