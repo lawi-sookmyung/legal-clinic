@@ -1100,60 +1100,34 @@
     async function determineRole(user) {
       const email = user.email.toLowerCase();
 
-      // Firestore roles/config에서 동적 역할 확인
-      let firestoreMasters = [];
-      let firestoreManagers = [];
-      let firestoreBlocked = [];
+      // Firestore roles/config에서 역할 확인 시도
       try {
         const rolesDoc = await db.collection('roles').doc('config').get();
         if (rolesDoc.exists) {
           const data = rolesDoc.data();
-          firestoreMasters = (data.masters || []).map(e => e.toLowerCase());
-          firestoreManagers = (data.clinic_managers || []).map(e => e.toLowerCase());
-          firestoreBlocked = (data.blocked || []).map(e => e.toLowerCase());
+          const masters = (data.masters || []).map(e => e.toLowerCase());
+          const managers = (data.clinic_managers || []).map(e => e.toLowerCase());
+          const blocked = (data.blocked || []).map(e => e.toLowerCase());
           const lawyers = (data.lawyers || []).map(e => e.toLowerCase());
 
-          // 1) 차단 확인 (Firestore + 하드코딩)
-          if (firestoreBlocked.includes(email) || BLOCKED_EMAILS.includes(email)) {
-            currentRole = ROLES.BLOCKED;
-            return;
-          }
-
-          // 2) 마스터 확인 (Firestore + 하드코딩)
-          if (firestoreMasters.includes(email) || MASTER_EMAILS.includes(email)) {
-            currentRole = ROLES.MASTER;
-            await ensureRolesDoc();
-            return;
-          }
-
-          // 3) 클리닉 매니저 확인 (Firestore + 하드코딩)
-          if (firestoreManagers.includes(email) || CLINIC_MANAGER_EMAILS.includes(email)) {
-            currentRole = ROLES.CLINIC_MANAGER;
-            return;
-          }
-
-          // 4) 변호사 확인
-          if (lawyers.includes(email)) {
-            currentRole = ROLES.LAWYER;
-            return;
-          }
+          // Firestore 데이터가 있으면 Firestore만 신뢰
+          if (blocked.includes(email)) { currentRole = ROLES.BLOCKED; return; }
+          if (masters.includes(email)) { currentRole = ROLES.MASTER; return; }
+          if (managers.includes(email)) { currentRole = ROLES.CLINIC_MANAGER; return; }
+          if (lawyers.includes(email)) { currentRole = ROLES.LAWYER; return; }
+          if (isSookmyungEmail(email)) { currentRole = ROLES.STUDENT; return; }
+          currentRole = ROLES.BLOCKED;
+          return;
         }
       } catch (e) {
         console.warn('roles/config 확인 실패:', e.code || e.message);
       }
 
-      // Firestore 없는 경우 하드코딩 폴백
+      // Firestore가 없는 경우에만 하드코딩 폴백 (최초 설정 전)
       if (BLOCKED_EMAILS.includes(email)) { currentRole = ROLES.BLOCKED; return; }
       if (MASTER_EMAILS.includes(email)) { currentRole = ROLES.MASTER; await ensureRolesDoc(); return; }
       if (CLINIC_MANAGER_EMAILS.includes(email)) { currentRole = ROLES.CLINIC_MANAGER; return; }
-
-      // 5) 숙명 이메일이면 학생
-      if (isSookmyungEmail(email)) {
-        currentRole = ROLES.STUDENT;
-        return;
-      }
-
-      // 6) 나머지는 차단
+      if (isSookmyungEmail(email)) { currentRole = ROLES.STUDENT; return; }
       currentRole = ROLES.BLOCKED;
     }
 
@@ -1162,6 +1136,7 @@
         const ref = db.collection('roles').doc('config');
         const doc = await ref.get();
         if (!doc.exists) {
+          // 최초 생성 시에만 하드코딩 값을 초기값으로 사용
           await ref.set({
             masters: MASTER_EMAILS,
             lawyers: [],
@@ -1170,22 +1145,8 @@
             blockedReasons: {},
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
-        } else {
-          // 마스터 및 매니저 목록 동기화 (하드코딩된 값 보장)
-          const data = doc.data();
-          const existingMasters = data.masters || [];
-          const existingManagers = data.clinic_managers || [];
-          const updateData = {};
-          if (MASTER_EMAILS.some(m => !existingMasters.includes(m))) {
-            updateData.masters = firebase.firestore.FieldValue.arrayUnion(...MASTER_EMAILS);
-          }
-          if (CLINIC_MANAGER_EMAILS.some(m => !existingManagers.includes(m))) {
-            updateData.clinic_managers = firebase.firestore.FieldValue.arrayUnion(...CLINIC_MANAGER_EMAILS);
-          }
-          if (Object.keys(updateData).length > 0) {
-            await ref.update(updateData);
-          }
         }
+        // 이미 존재하면 Firestore 데이터를 신뢰 (UI에서 삭제한 내용 유지)
       } catch (e) {
         console.warn('ensureRolesDoc:', e);
       }
@@ -1936,7 +1897,7 @@
       renderManagerList();
     }
 
-    function renderRoleList(container, emails, currentUserEmail, hardcoded, removeFn) {
+    function renderRoleList(container, emails, currentUserEmail, removeFn) {
       if (!container) return;
       if (emails.length === 0) {
         container.innerHTML = '<p style="font-size:13px;color:var(--light-text);">등록된 계정이 없습니다.</p>';
@@ -1945,16 +1906,11 @@
       container.innerHTML = `<div style="background:var(--rose-gold-lightest);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;">` +
         emails.map((email, i) => {
           const borderBottom = i < emails.length - 1 ? 'border-bottom:1px solid var(--border-color);' : '';
-          const isHardcoded = hardcoded.includes(email);
           const isSelf = email.toLowerCase() === currentUserEmail;
-          const canRemove = !isHardcoded && !isSelf;
-          const tagHTML = isHardcoded 
-            ? '<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;background:var(--rose-gold-lighter);color:var(--rose-gold-dark);margin-left:6px;">기본</span>' 
-            : '<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;background:#E8F5E9;color:#2E7D32;margin-left:6px;">추가됨</span>';
           const selfTag = isSelf 
-            ? '<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;background:#E3F2FD;color:#1565C0;margin-left:4px;">나</span>' 
+            ? '<span style="display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;background:#E3F2FD;color:#1565C0;margin-left:6px;">나</span>' 
             : '';
-          const removeBtn = canRemove 
+          const removeBtn = !isSelf 
             ? `<button onclick="${removeFn}(${i})" title="제거"
                 style="width:24px;height:24px;border-radius:50%;border:1px solid var(--rose-gold-light);background:white;color:var(--rose-gold-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s;"
                 onmouseover="this.style.background='#FFF0EE';this.style.borderColor='var(--rose-gold-primary)'" 
@@ -1964,7 +1920,7 @@
             <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;${borderBottom}">
               <div style="flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;">
                 <span style="font-size:13px;font-weight:600;color:var(--dark-text);">${email}</span>
-                ${tagHTML}${selfTag}
+                ${selfTag}
               </div>
               ${removeBtn}
             </div>`;
@@ -1973,12 +1929,12 @@
 
     function renderMasterList() {
       const container = document.getElementById('masterList');
-      renderRoleList(container, masterEmails, currentUser.email.toLowerCase(), MASTER_EMAILS, 'removeMaster');
+      renderRoleList(container, masterEmails, currentUser.email.toLowerCase(), 'removeMaster');
     }
 
     function renderManagerList() {
       const container = document.getElementById('managerList');
-      renderRoleList(container, managerEmails, currentUser.email.toLowerCase(), CLINIC_MANAGER_EMAILS, 'removeManager');
+      renderRoleList(container, managerEmails, currentUser.email.toLowerCase(), 'removeManager');
     }
 
     async function addMaster() {
@@ -2006,8 +1962,8 @@
     async function removeMaster(index) {
       if (currentRole !== ROLES.MASTER) return;
       const email = masterEmails[index];
-      if (MASTER_EMAILS.includes(email)) { showToast('기본 관리자는 제거할 수 없습니다.', 'error'); return; }
       if (email.toLowerCase() === currentUser.email.toLowerCase()) { showToast('자기 자신은 제거할 수 없습니다.', 'error'); return; }
+      if (masterEmails.length <= 1) { showToast('최소 1명의 관리자가 필요합니다.', 'error'); return; }
       if (!confirm(`${email} 관리자를 제거하시겠습니까?`)) return;
       try {
         masterEmails.splice(index, 1);
@@ -2046,7 +2002,6 @@
     async function removeManager(index) {
       if (currentRole !== ROLES.MASTER) return;
       const email = managerEmails[index];
-      if (CLINIC_MANAGER_EMAILS.includes(email)) { showToast('기본 매니저는 제거할 수 없습니다.', 'error'); return; }
       if (!confirm(`${email} 매니저를 제거하시겠습니까?`)) return;
       try {
         managerEmails.splice(index, 1);
